@@ -1,0 +1,112 @@
+{
+  "train_shape": [
+    1460,
+    81
+  ],
+  "test_shape": [
+    1459,
+    80
+  ],
+  "saleprice_describe": {
+    "count": 1460.0,
+    "mean": 180921.19589041095,
+    "std": 79442.50288288662,
+    "min": 34900.0,
+    "25%": 129975.0,
+    "50%": 163000.0,
+    "75%": 214000.0,
+    "max": 755000.0
+  },
+  "missing_top": {
+    "PoolQC": 99.52,
+    "MiscFeature": 96.3,
+    "Alley": 93.77,
+    "Fence": 80.75,
+    "MasVnrType": 59.73,
+    "FireplaceQu": 47.26,
+    "LotFrontage": 17.74,
+    "GarageType": 5.55,
+    "GarageYrBlt": 5.55,
+    "GarageFinish": 5.55,
+    "GarageQual": 5.55,
+    "GarageCond": 5.55,
+    "BsmtExposure": 2.6,
+    "BsmtFinType2": 2.6,
+    "BsmtQual": 2.53,
+    "BsmtCond": 2.53,
+    "BsmtFinType1": 2.53,
+    "MasVnrArea": 0.55,
+    "Electrical": 0.07
+  },
+  "top_corr_with_saleprice": {
+    "SalePrice": 1.0,
+    "OverallQual": 0.7909816005838053,
+    "GrLivArea": 0.7086244776126515,
+    "GarageCars": 0.6404091972583519,
+    "GarageArea": 0.6234314389183622,
+    "TotalBsmtSF": 0.6135805515591943,
+    "1stFlrSF": 0.6058521846919153,
+    "FullBath": 0.5606637627484453,
+    "TotRmsAbvGrd": 0.5337231555820284,
+    "YearBuilt": 0.5228973328794967,
+    "YearRemodAdd": 0.5071009671113866
+  },
+  "n_numeric_features": 36,
+  "n_categorical_features": 39,
+  "n_features_after_encoding": 235,
+  "model_metrics": {
+    "Linear Regression": {
+      "RMSE_log": 0.209,
+      "RMSE_USD": 25775.43,
+      "MAE_USD": 15493.41,
+      "R2": 0.9134,
+      "CV_RMSE_log_5fold": 0.1817
+    },
+    "Ridge Regression": {
+      "RMSE_log": 0.1375,
+      "RMSE_USD": 25346.65,
+      "MAE_USD": 16597.17,
+      "R2": 0.9162,
+      "CV_RMSE_log_5fold": 0.1478
+    },
+    "Lasso Regression": {
+      "RMSE_log": 0.142,
+      "RMSE_USD": 26827.7,
+      "MAE_USD": 17107.6,
+      "R2": 0.9062,
+      "CV_RMSE_log_5fold": 0.1493
+    },
+    "Random Forest": {
+      "RMSE_log": 0.1476,
+      "RMSE_USD": 29672.78,
+      "MAE_USD": 17603.47,
+      "R2": 0.8852,
+      "CV_RMSE_log_5fold": 0.1455
+    },
+    "Gradient Boosting": {
+      "RMSE_log": 0.1394,
+      "RMSE_USD": 30452.78,
+      "MAE_USD": 16751.37,
+      "R2": 0.8791,
+      "CV_RMSE_log_5fold": 0.1336
+    }
+  },
+  "best_model": "Ridge Regression",
+  "top_feature_importances": {
+    "OverallQual": 0.5442167504349511,
+    "GrLivArea": 0.11549571713401385,
+    "TotalBsmtSF": 0.04368904052148528,
+    "GarageCars": 0.038080275240663056,
+    "GarageArea": 0.02771533457406543,
+    "BsmtFinSF1": 0.021875583084369234,
+    "1stFlrSF": 0.020770773749126083,
+    "LotArea": 0.015314979889298244,
+    "CentralAir_Y": 0.015293509843100538,
+    "YearBuilt": 0.014823819312405844,
+    "OverallCond": 0.009866760965518067,
+    "YearRemodAdd": 0.008965648959293108,
+    "GarageFinish_Unf": 0.008510072228532726,
+    "2ndFlrSF": 0.007517248480129331,
+    "OpenPorchSF": 0.006535685013839232
+  }
+}
