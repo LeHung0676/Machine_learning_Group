@@ -1,155 +1,79 @@
-"""Xử lý missing, duplicate, outlier cho bộ House Prices.
+"""Chuẩn hóa, xử lý lệch phân phối, mã hóa one-hot, scale.
 
-Nguyên tắc quan trọng: NA trong bộ này phần lớn KHÔNG phải lỗi dữ liệu,
-mà có nghĩa "căn nhà không có hạng mục đó" (theo data_description.txt).
-Vì vậy tuyệt đối không điền mean/median cho các cột trong NONE_COLS/ZERO_COLS.
+Mọi tham số đều học từ train (fit_transform) rồi áp cho test (transform).
 """
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
+from scipy.stats import skew
+from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
 
-# NA = "không có hạng mục này" -> điền chuỗi "None"
-NONE_COLS = [
-    "Alley", "MasVnrType",
-    "BsmtQual", "BsmtCond", "BsmtExposure", "BsmtFinType1", "BsmtFinType2",
-    "FireplaceQu",
-    "GarageType", "GarageFinish", "GarageQual", "GarageCond",
-    "PoolQC", "Fence", "MiscFeature",
-]
-
-# NA = "không có" -> điền 0
-ZERO_COLS = [
-    "MasVnrArea",
-    "BsmtFinSF1", "BsmtFinSF2", "BsmtUnfSF", "TotalBsmtSF",
-    "BsmtFullBath", "BsmtHalfBath",
-    "GarageCars", "GarageArea",
-]
-
-# NA là thiếu thật -> điền mode học từ tập train
-MODE_COLS = ["Electrical", "KitchenQual", "Exterior1st", "Exterior2nd", "SaleType"]
-
-# Cột gần như chỉ có một giá trị duy nhất -> bỏ, không mang thông tin
-DROP_COLS = ["Utilities"]
+SCALERS = {"standard": StandardScaler, "minmax": MinMaxScaler, "robust": RobustScaler}
 
 
-class Cleaner:
-    """Làm sạch dữ liệu. Học tham số từ train, áp dụng cho cả train và test."""
-
+class Preprocessor:
     def __init__(self, cfg: dict):
-        self.cfg = cfg
-        self.modes_: dict[str, object] = {}
-        self.lot_frontage_by_nb_: pd.Series | None = None
-        self.lot_frontage_global_: float = 0.0
-        self.mszoning_by_nb_: pd.Series | None = None
-        self.report_: dict = {}
+        self.cfg = cfg["preprocess"]
+        self.scaler = SCALERS[self.cfg["scaler"]]()
+        self.skewed_cols_: list[str] = []
+        self.num_cols_: list[str] = []
+        self.cat_levels_: dict[str, list] = {}
+        self.columns_: list[str] = []
 
-    # ---------- fit ----------
-    def fit(self, train: pd.DataFrame) -> "Cleaner":
-        """Học mọi giá trị điền từ TẬP TRAIN, tránh rò rỉ thông tin từ test."""
-        self.lot_frontage_by_nb_ = train.groupby("Neighborhood")["LotFrontage"].median()
-        self.lot_frontage_global_ = float(train["LotFrontage"].median())
-        self.mszoning_by_nb_ = train.groupby("Neighborhood")["MSZoning"].agg(
-            lambda s: s.mode().iloc[0] if not s.mode().empty else "RL"
-        )
-        for c in MODE_COLS:
-            if c in train.columns and not train[c].mode().empty:
-                self.modes_[c] = train[c].mode().iloc[0]
-        return self
+    # ---------- fit + transform trên train ----------
+    def fit_transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        num = X.select_dtypes("number")
+        cat = X.select_dtypes(exclude="number")
 
-    # ---------- transform ----------
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = df.copy()
+        # 1. Chỉ xử lý lệch cho cột liên tục.
+        #    Cột nhị phân (0/1) hay thứ bậc ít giá trị thì log1p vô nghĩa.
+        min_unique = self.cfg.get("skew_min_unique", 15)
+        candidates = [c for c in num.columns if num[c].nunique() > min_unique]
+        s = num[candidates].apply(lambda col: skew(col.dropna()))
+        self.skewed_cols_ = s[s.abs() > self.cfg["skew_threshold"]].index.tolist()
 
-        # 1. Bỏ cột không mang thông tin
-        df = df.drop(columns=[c for c in DROP_COLS if c in df.columns])
+        # 2. Ghi nhớ danh sách giá trị của từng cột chữ,
+        #    để test sinh ra đúng bộ cột one-hot như train.
+        self.cat_levels_ = {c: sorted(cat[c].astype(str).unique()) for c in cat.columns}
 
-        # 2. NA có nghĩa "không có"
-        for c in NONE_COLS:
-            if c in df.columns:
-                df[c] = df[c].fillna("None")
-        for c in ZERO_COLS:
-            if c in df.columns:
-                df[c] = df[c].fillna(0)
+        X = self._apply(X)
+        self.columns_ = X.columns.tolist()
 
-        # 3. Functional: data_description ghi rõ "assume typical" khi thiếu
-        if "Functional" in df.columns:
-            df["Functional"] = df["Functional"].fillna("Typ")
+        # 3. Scale: chỉ fit trên train
+        self.num_cols_ = [c for c in num.columns if c in X.columns]
+        X[self.num_cols_] = self.scaler.fit_transform(X[self.num_cols_])
+        return X
 
-        # 4. LotFrontage: điền theo median của cùng khu dân cư.
-        #    Các nhà cùng Neighborhood có mặt tiền tương tự nhau,
-        #    nên cách này sát thực tế hơn median toàn bộ.
-        if "LotFrontage" in df.columns:
-            df["LotFrontage"] = df["LotFrontage"].fillna(
-                df["Neighborhood"].map(self.lot_frontage_by_nb_)
-            ).fillna(self.lot_frontage_global_)
+    # ---------- transform trên test ----------
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        X = self._apply(X)
+        X = X.reindex(columns=self.columns_, fill_value=0)
+        X[self.num_cols_] = self.scaler.transform(X[self.num_cols_])
+        return X
 
-        # 5. MSZoning: điền theo mode của cùng khu dân cư
-        if "MSZoning" in df.columns:
-            df["MSZoning"] = df["MSZoning"].fillna(
-                df["Neighborhood"].map(self.mszoning_by_nb_)
-            )
+    # ---------- dùng chung ----------
+    def _apply(self, X: pd.DataFrame) -> pd.DataFrame:
+        X = X.copy()
 
-        # 6. GarageYrBlt: nhà không có garage thì điền bằng năm xây nhà,
-        #    KHÔNG điền 0 vì sẽ làm cột tuổi garage sai lệch rất nặng.
-        if "GarageYrBlt" in df.columns:
-            df["GarageYrBlt"] = df["GarageYrBlt"].fillna(df["YearBuilt"])
-            # Sửa lỗi gốc trong dữ liệu: có 1 dòng ở test ghi GarageYrBlt = 2207
-            bad = df["GarageYrBlt"] > df["YrSold"]
-            df.loc[bad, "GarageYrBlt"] = df.loc[bad, "YearBuilt"]
+        # Kéo đuôi phân phối lệch về gần chuẩn.
+        # Lasso là model tuyến tính nên rất cần bước này; LightGBM thì không,
+        # nhưng dùng chung một bộ dữ liệu cho dễ so sánh.
+        for c in self.skewed_cols_:
+            if c in X.columns:
+                X[c] = np.log1p(X[c].clip(lower=0))
 
-        # 7. Các cột thiếu thật còn lại -> mode học từ train
-        for c, v in self.modes_.items():
-            if c in df.columns:
-                df[c] = df[c].fillna(v)
+        # One-hot với bộ giá trị đã chốt từ train.
+        # Nếu test có giá trị lạ, nó bị gán vào NaN rồi bỏ,
+        # thay vì sinh ra một cột mới mà model chưa từng thấy.
+        for c, levels in self.cat_levels_.items():
+            if c in X.columns:
+                X[c] = pd.Categorical(X[c].astype(str), categories=levels)
+        cat_cols = list(self.cat_levels_.keys())
+        cat_cols = [c for c in cat_cols if c in X.columns]
+        if cat_cols:
+            X = pd.get_dummies(X, columns=cat_cols, dummy_na=False, dtype=float)
+        return X
 
-        # 8. Lưới an toàn: nếu còn NA nào chưa lường trước
-        leftover = [c for c in df.columns if df[c].isna().any()]
-        if leftover:
-            for c in leftover:
-                if df[c].dtype == "O":
-                    df[c] = df[c].fillna(df[c].mode().iloc[0])
-                else:
-                    df[c] = df[c].fillna(df[c].median())
-        self.report_["filled_by_fallback"] = leftover
-
-        return df
-
-    # ---------- outlier ----------
-    def remove_outliers(self, df: pd.DataFrame, target: str) -> pd.DataFrame:
-        """CHỈ áp dụng cho train. Không bao giờ bỏ dòng của test."""
-        before = len(df)
-        removed = []
-        for r in self.cfg["clean"].get("outlier_rules", []):
-            mask = (df[r["col"]] > r["gt"]) & (df[target] < r["target_lt"])
-            if "Id" in df.columns:
-                removed += df.loc[mask, "Id"].tolist()
-            df = df[~mask]
-        self.report_["outliers_removed_ids"] = removed
-        self.report_["rows_before"] = before
-        self.report_["rows_after"] = len(df)
-        return df.reset_index(drop=True)
-
-    def drop_duplicates(self, df: pd.DataFrame) -> pd.DataFrame:
-        cols = [c for c in df.columns if c != "Id"]
-        n = len(df)
-        df = df.drop_duplicates(subset=cols).reset_index(drop=True)
-        self.report_["duplicates_removed"] = n - len(df)
-        return df
-
-    # ---------- entry point dùng trong Pipeline ----------
-    def run(self, train: pd.DataFrame, test: pd.DataFrame, target: str):
-        train = self.drop_duplicates(train)
-        train = self.remove_outliers(train, target)
-        self.fit(train)
-        return self.transform(train), self.transform(test)
-
-    def summary(self) -> str:
-        """Dùng cho note kỹ thuật trong docs/."""
-        r = self.report_
-        return (
-            f"- Dòng trước khi làm sạch: {r.get('rows_before')}\n"
-            f"- Dòng sau khi làm sạch: {r.get('rows_after')}\n"
-            f"- Trùng lặp đã bỏ: {r.get('duplicates_removed')}\n"
-            f"- Id ngoại lai đã bỏ: {r.get('outliers_removed_ids')}\n"
-            f"- Cột phải dùng lưới an toàn: {r.get('filled_by_fallback')}\n"
-        )
+    def feature_names(self) -> list[str]:
+        return self.columns_
