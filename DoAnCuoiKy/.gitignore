@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Mô hình lớn (chỉ giữ mô hình cuối cùng nếu cần)
+models/*.joblib
+!models/best_model.joblib
+
+# Dữ liệu sinh ra tự động
+data/processed/*.csv
