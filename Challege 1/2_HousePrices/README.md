@@ -28,13 +28,19 @@ pip install -e .
 
 # 3. Dữ liệu: train.csv và test.csv từ Kaggle đặt vào data/raw/
 
-# 4. Chạy
+# 4. Chạy — chọn một trong hai cách
+#    a) Notebook: mở main.ipynb, sửa MEMBER ở ô tham số rồi Run All
+#    b) Dòng lệnh:
 python main.py --member <ten_ban>
 python main.py --config config/config_<ten_ban>.yaml --member <ten_ban>
 
 # 5. Kiểm thử
 pytest tests/ -q                    # phải ra 46 passed
 ```
+
+Hai cách cho **cùng một kết quả**, vì đều gọi `HousePricePipeline`.
+Dùng `main.ipynb` khi cần xem bảng số và biểu đồ ngay tại chỗ, hoặc khi làm báo cáo.
+Dùng `main.py` khi chỉ cần file nộp, hoặc khi chạy lại nhiều lần cho nhanh.
 
 File nộp Kaggle: `SUBMIT-summarize_report/submission.csv`
 
@@ -54,7 +60,6 @@ File nộp Kaggle: `SUBMIT-summarize_report/submission.csv`
 ├── models/                       # Model đã train (.joblib)
 ├── notebooks/
 │   ├── global_eda.ipynb          # EDA tổng quan
-│   ├── run_pipeline.ipynb        # Bản notebook của main.py
 │   └── experiments/              # Notebook riêng từng thành viên
 ├── reports/
 │   ├── experiments/              # Log, metrics, bảng so sánh từng lần chạy
@@ -79,7 +84,8 @@ File nộp Kaggle: `SUBMIT-summarize_report/submission.csv`
 ├── tests/                        # 46 unit test
 ├── Nop_Classroom/                # Bài nộp cho lớp (Paper, Slide, Poster)
 ├── SUBMIT-summarize_report/      # submission.csv cho Kaggle
-├── main.py
+├── main.ipynb                    # Điểm vào dạng notebook
+├── main.py                       # Điểm vào dạng dòng lệnh
 ├── setup.py
 └── requirements.txt
 ```
@@ -109,7 +115,7 @@ main.py  ->  đọc config  ->  Pipeline
 |  | EDA + Clean | `src/eda/eda.py`, `src/preprocess/Clean.py`, `notebooks/global_eda.ipynb`, `docs/` |
 |  | Feature + Preprocess | `src/preprocess/Feature.py`, `src/preprocess/Preprocess.py` |
 |  | Model + tuning | `src/model/*.py` |
-|  | Ensemble + Evaluation + Submission | `src/ensemble/`, `src/evaluation/`, `src/pipeline/`, `src/tracking/`, `reports/results_summary.md`, `notebooks/run_pipeline.ipynb` |
+|  | Ensemble + Evaluation + Submission | `src/ensemble/`, `src/evaluation/`, `src/pipeline/`, `src/tracking/`, `reports/results_summary.md`, `main.ipynb` |
 
 **Nhánh riêng, không commit thẳng vào `main`:**
 
