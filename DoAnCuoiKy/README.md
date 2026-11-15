@@ -26,15 +26,18 @@ Loại bài toán: **Hồi quy (Regression)** có giám sát.
 
 ```
 .
-├── app/                 # Demo ứng dụng (Streamlit)
+├── app/                 # Demo ứng dụng (Streamlit) – chưa triển khai
 ├── data/
-│   ├── raw/             # Dữ liệu gốc (không chỉnh sửa)
-│   └── processed/       # Dữ liệu sau tiền xử lý
+│   ├── raw/             # Dữ liệu gốc energydata_complete.csv (không chỉnh sửa)
+│   └── processed/       # Dữ liệu sau tiền xử lý (tự sinh, không đưa lên git)
 ├── docs/                # Kế hoạch, mô tả bài toán, tài liệu nhóm
 ├── models/              # Mô hình đã huấn luyện (.joblib)
 ├── notebooks/           # Notebook EDA và thực nghiệm
+│   ├── NHAT_KY_CHAY.md  # Nhật ký kiểm thử notebook
+│   └── test_runs/       # Bản lưu các lần chạy kiểm thử (*_runXX.ipynb)
 ├── reports/figures/     # Hình ảnh xuất ra cho báo cáo/slide/poster
 ├── src/                 # Mã nguồn Python dùng chung
+├── test/                # Kiểm thử tự động (pytest)
 ├── requirements.txt
 └── README.md
 ```
@@ -42,8 +45,8 @@ Loại bài toán: **Hồi quy (Regression)** có giám sát.
 ## 4. Cài đặt
 
 ```bash
-git clone <link-repo>
-cd <ten-repo>
+git clone https://github.com/LeHung0676/Machine_learning_Group.git
+cd Machine_learning_Group/DoAnCuoiKy
 python -m venv .venv
 # Windows: .venv\Scripts\activate    |   macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
@@ -51,12 +54,29 @@ pip install -r requirements.txt
 
 ## 5. Hướng dẫn chạy
 
-> Đang cập nhật theo tiến độ dự án.
+> Đang cập nhật theo tiến độ dự án. Mọi lệnh chạy từ thư mục `DoAnCuoiKy/`.
 
 ```bash
 # Kiểm tra nạp dữ liệu
 python -m src.data_loader
+
+# Chia train / validation / test theo thời gian
+python -m src.split
+
+# Xem các bộ đặc trưng
+python -m src.features
+
+# Chạy kiểm thử
+python -m pytest test/ -v
 ```
+
+Notebook (mở bằng Jupyter, chạy *Run All*):
+
+| Notebook | Nội dung |
+|---|---|
+| `01_data_overview.ipynb` | Tổng quan dữ liệu, kiểm tra chất lượng |
+| `02_edact.ipynb` | EDA đầy đủ: phân phối mục tiêu, xu hướng thời gian, tương quan, đa cộng tuyến (VIF) |
+| `01_eda.ipynb`, `02_eda.ipynb`, `3.1_eda.ipynb` | Các bản EDA trước, nội dung đã nằm trong `02_edact.ipynb` |
 
 ## 6. Thành viên nhóm
 

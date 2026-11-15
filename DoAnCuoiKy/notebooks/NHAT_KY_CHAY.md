@@ -284,3 +284,39 @@ Hình mới `02_corr_heatmap_inputs.png` được lưu vào `reports/figures/`.
 - [ ] Bảng top-10 cặp tương quan (ô 3.2) có tên cột `level_0`, `level_1`. Nên đặt tên rõ, ví dụ `feature_1`, `feature_2`.
 - [ ] Hình heatmap 3.2 bị đường lưới của style `whitegrid` vẽ đè lên các ô (chỉ ảnh hưởng thẩm mỹ).
 - [ ] Bảng VIF chỉ hiển thị 12 dòng đầu trong khi nhận xét nói 14 đặc trưng VIF > 10. Nên hiện `head(14)` để người đọc tự kiểm.
+
+---
+---
+
+# Sửa lỗi và dọn dẹp thư mục `DoAnCuoiKy` (15/11/2026)
+
+Kiểm tra toàn bộ thư mục, phát hiện và sửa các lỗi sau:
+
+| # | Vấn đề | Cách sửa | Trạng thái |
+|---|---|---|---|
+| 1 | `src/features.py` còn dấu xung đột merge (commit `4a578ac`) → `SyntaxError` | Gỡ xung đột, giữ bản đầy đủ (giống `a8f37ae`) | ✅ |
+| 2 | `01_eda.ipynb` còn dấu xung đột → file JSON hỏng, không mở được | Khôi phục bản đã chốt 14/11 (`0c1257d`, cùng nội dung, có output) | ✅ |
+| 3 | `02_eda .ipynb` bị xóa trắng (30 ô → 0 ô) | Khôi phục từ `9fc3cb3` | ✅ |
+| 4 | `README.md` còn dấu xung đột ở mục 7 | Gỡ xung đột, giữ nguyên nội dung ghi nhận | ✅ |
+| 5 | Sai đường dẫn dữ liệu (tồn từ 14/11) | Chuyển `energydata_complete.csv` vào `data/raw/` | ✅ |
+| 6 | `pytest` không chạy được; docstring ghi `tests/` | Nhờ #1 test chạy lại; sửa thành `test/`; thêm `pytest` vào `requirements.txt` | ✅ |
+| 7 | Tên `02_eda .ipynb` có dấu cách thừa | Đổi thành `02_eda.ipynb` | ✅ |
+| 8 | 40 file `*_runXX.ipynb` nằm lẫn với notebook chính | Chuyển vào `notebooks/test_runs/` | ✅ |
+| 9 | `01_data_overview.ipynb` chưa chạy | Chạy, lưu output và hình `01_appliances_timeseries.png` | ✅ |
+| 10 | README trỏ tới `data/README.md` không tồn tại; hướng dẫn chạy còn thiếu | Tạo `data/README.md` (mô tả cột); bổ sung lệnh chạy, bảng notebook, thư mục `test/` | ✅ |
+
+**Kiểm tra sau khi sửa (không dùng cách khắc phục tạm nào):**
+
+- `python -m pytest test/ -v`: **3/3 passed**
+- `python -m src.data_loader`, `python -m src.split`, `python -m src.features`: chạy đúng
+- *Run All* 5 notebook: `01_data_overview` (1 hình), `01_eda` (2), `02_eda` (6), `3.1_eda` (7), `02_edact` (8): **0 lỗi**
+- Các hình `02_*.png` sinh lại giống từng byte bản trên repo
+
+**Ghi chú:** các mục nhật ký phía trên giữ nguyên tên file cũ (`02_eda .ipynb`, `*_runXX.ipynb` ở `notebooks/`) để đúng lịch sử.
+
+## Việc còn tồn đọng (cần nhóm quyết định)
+
+- [ ] Gộp các notebook EDA trùng nhau: `02_edact.ipynb` đã chứa toàn bộ nội dung `01_eda`, `02_eda`, `3.1_eda`. Đề xuất giữ `02_edact` làm bản chính.
+- [ ] Thống nhất đánh số notebook (tiêu đề `02_edact`/`3.1_eda` vẫn ghi "02"; có 2 file `01_`).
+- [ ] Bổ sung tóm tắt Phần 3 trong `02_edact`, đặt tên cột rõ cho bảng cặp tương quan (`level_0`/`level_1`), hiện `head(14)` cho bảng VIF.
+- [ ] `app/` chưa có demo Streamlit như README mô tả.
