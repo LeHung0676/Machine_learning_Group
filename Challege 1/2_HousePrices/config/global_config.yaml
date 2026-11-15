@@ -46,7 +46,16 @@ models:
     colsample_bytree: 0.8
 
 ensemble:
-  method: blending          # voting | stacking | bagging | blending
-  weights: {lasso: 0.5, lightgbm: 0.5}
+  method: blending          # voting | blending | stacking
+  meta_alpha: 1.0           # chỉ dùng khi method là stacking
 
 metrics: [rmse, mae, r2, rmsle]
+
+  lightgbm:
+    n_estimators: 3000
+    learning_rate: 0.01
+    num_leaves: 31
+    min_child_samples: 20
+    subsample: 0.8
+    colsample_bytree: 0.8
+    early_stopping_rounds: 200
