@@ -1,0 +1,75 @@
+# ===== Cấu hình toàn hệ thống - Music Genre Classification =====
+project:
+  name: music_genre
+  seed: 42
+
+paths:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+  models: models
+  reports: reports
+  experiments: reports/experiments
+  figures: reports/figures
+  submission: SUBMIT-summarize_report
+
+data:
+  train_file: train.csv
+  test_file: test.csv
+  target: Class
+  id_col: Id
+  n_classes: 11
+
+split:
+  n_folds: 5
+
+clean:
+  duration_col: duration_in min/ms
+  minute_threshold: 30        # giá trị dưới ngưỡng này đang ở đơn vị phút
+
+features:
+  name_features: true         # đặc trưng rút từ tên bài hát
+  target_encode: [Artist Name, pair]
+
+run:
+  models: [histgb, randomforest, extratrees, logreg, text, lightgbm]
+
+models:
+  histgb:
+    max_iter: 300
+    learning_rate: 0.06
+  randomforest:
+    n_estimators: 400
+    min_samples_leaf: 2
+  extratrees:
+    n_estimators: 400
+    min_samples_leaf: 2
+  logreg:
+    C: 1.0
+    max_iter: 2000
+  text:
+    C: 5.0
+    ngram_min: 2
+    ngram_max: 4
+    min_df: 2
+  lightgbm:
+    n_estimators: 600
+    learning_rate: 0.05
+    num_leaves: 31
+    subsample: 0.8
+    colsample_bytree: 0.8
+  xgboost:
+    n_estimators: 600
+    learning_rate: 0.05
+    max_depth: 6
+    subsample: 0.8
+    colsample_bytree: 0.8
+  catboost:
+    iterations: 800
+    learning_rate: 0.08
+    depth: 6
+
+ensemble:
+  method: stacking            # voting | blending | stacking
+
+metrics: [accuracy, f1_macro, log_loss]

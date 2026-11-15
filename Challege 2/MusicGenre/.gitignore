@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+
+# Dữ liệu trung gian và model: mỗi người tự sinh bằng main.py
+data/interim/*
+data/processed/*
+models/*
+
+# Sinh ra tự động, không commit
+mlruns/
+catboost_info/
+reports/experiments/*/
+
+!**/.gitkeep

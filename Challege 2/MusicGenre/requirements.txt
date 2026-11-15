@@ -1,0 +1,20 @@
+# Bắt buộc
+pandas
+numpy
+scikit-learn>=1.4      # cần TargetEncoder đa lớp
+scipy
+pyyaml
+joblib
+matplotlib
+
+# Chạy notebook
+jupyter
+ipykernel
+
+# Kiểm thử
+pytest
+
+# Model tùy chọn: thiếu cái nào thì pipeline tự bỏ qua model đó
+lightgbm
+xgboost
+catboost

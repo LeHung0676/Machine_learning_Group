@@ -1,0 +1,11 @@
+# Config riêng của thành viên. Sao chép thành config_<ten_ban>.yaml.
+# Chỉ ghi phần muốn đổi, phần còn lại kế thừa từ global_config.yaml.
+#   python main.py --config config/config_minh.yaml --member minh
+extends: global_config.yaml
+
+run:
+  models: [histgb, logreg]     # chạy ít model cho nhanh khi đang thử
+
+models:
+  histgb:
+    max_iter: 200
