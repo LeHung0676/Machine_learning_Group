@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+# Dữ liệu & model lớn không đưa lên Git
+data/interim/*
+data/processed/*
+models/*
+!**/.gitkeep

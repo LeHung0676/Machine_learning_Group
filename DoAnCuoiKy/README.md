@@ -73,3 +73,7 @@ python -m src.data_loader
 
 - Thư viện: NumPy, Pandas, Scikit-learn, Matplotlib, Seaborn.
 
+<<<<<<< HEAD
+=======
+- Claude lên kế hoạch 
+>>>>>>> 4d1608ea44602e52ed03a5da141d94c452ca596c

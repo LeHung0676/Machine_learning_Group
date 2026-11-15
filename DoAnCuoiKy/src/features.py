@@ -1,13 +1,20 @@
+<<<<<<< HEAD
 """Xây dựng và lựa chọn đặc trưng (feature engineering & selection).
 
 - add_time_features   : đặc trưng thời gian trích xuất từ cột `date`
 - get_feature_columns : danh sách đặc trưng đưa vào mô hình theo từng bộ (feature set)
+=======
+"""Xây dựng đặc trưng (feature engineering).
+
+Hiện tại: đặc trưng thời gian trích xuất từ cột `date`.
+>>>>>>> 4d1608ea44602e52ed03a5da141d94c452ca596c
 """
 from __future__ import annotations
 
 import numpy as np
 import pandas as pd
 
+<<<<<<< HEAD
 from src.config import DATE_COL, HUMIDITY_COLS, OTHER_COLS, TARGET, TEMP_COLS, WEATHER_COLS
 
 TIME_FEATURES = ["hour", "day_of_week", "is_weekend", "nsm", "hour_sin", "hour_cos"]
@@ -31,6 +38,12 @@ DROPPED_FEATURES = {
     "hour": "trùng thông tin với nsm",
 }
 
+=======
+from src.config import DATE_COL
+
+TIME_FEATURES = ["hour", "day_of_week", "is_weekend", "nsm", "hour_sin", "hour_cos"]
+
+>>>>>>> 4d1608ea44602e52ed03a5da141d94c452ca596c
 
 def add_time_features(df: pd.DataFrame, date_col: str = DATE_COL) -> pd.DataFrame:
     """Thêm các đặc trưng thời gian. Trả về bản sao, không sửa df gốc.
@@ -56,6 +69,7 @@ def add_time_features(df: pd.DataFrame, date_col: str = DATE_COL) -> pd.DataFram
     return out
 
 
+<<<<<<< HEAD
 def get_feature_columns(feature_set: str = "full", include_control: bool = True) -> list[str]:
     """Trả về danh sách cột đặc trưng của một bộ.
 
@@ -78,12 +92,17 @@ def make_xy(df: pd.DataFrame, feature_set: str = "full", include_control: bool =
     return df[cols], df[TARGET]
 
 
+=======
+>>>>>>> 4d1608ea44602e52ed03a5da141d94c452ca596c
 if __name__ == "__main__":
     from src.data_loader import load_raw_data
 
     data = add_time_features(load_raw_data())
     print(data[["date", *TIME_FEATURES]].head(8))
+<<<<<<< HEAD
     print()
     for name in FEATURE_SETS:
         print(f"{name:>8}: {len(get_feature_columns(name))} đặc trưng")
     print("Loại bỏ:", DROPPED_FEATURES)
+=======
+>>>>>>> 4d1608ea44602e52ed03a5da141d94c452ca596c

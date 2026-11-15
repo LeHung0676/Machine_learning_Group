@@ -1,0 +1,52 @@
+# ===== Cấu hình toàn hệ thống - House Prices Prediction =====
+project:
+  name: house_prices
+  seed: 42
+
+paths:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+  models: models
+  reports: reports
+  experiments: reports/experiments
+  figures: reports/figures
+  submission: SUBMIT-summarize_report
+
+data:
+  train_file: train.csv
+  test_file: test.csv
+  target: SalePrice
+  id_col: Id
+  log_target: true          # dùng log1p(SalePrice) khi train
+
+split:
+  test_size: 0.2
+  n_folds: 5
+
+clean:
+  drop_cols_missing_ratio: 0.8
+  outlier_rules:
+    - {col: GrLivArea, gt: 4000, target_lt: 300000}
+
+preprocess:
+  scaler: robust            # standard | minmax | robust
+  skew_threshold: 0.75
+
+models:
+  lasso:
+    alpha: 0.0005
+    max_iter: 50000
+  lightgbm:
+    n_estimators: 3000
+    learning_rate: 0.01
+    num_leaves: 31
+    min_child_samples: 20
+    subsample: 0.8
+    colsample_bytree: 0.8
+
+ensemble:
+  method: blending          # voting | stacking | bagging | blending
+  weights: {lasso: 0.5, lightgbm: 0.5}
+
+metrics: [rmse, mae, r2, rmsle]
