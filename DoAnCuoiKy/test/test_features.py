@@ -1,6 +1,6 @@
 """Kiểm thử hàm đặc trưng thời gian.
 
-Chạy:  python -m pytest tests/ -v
+Chạy:  python -m pytest test/ -v
 """
 import sys
 from pathlib import Path
