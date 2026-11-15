@@ -1,15 +1,35 @@
-"""Xây dựng đặc trưng (feature engineering).
+"""Xây dựng và lựa chọn đặc trưng (feature engineering & selection).
 
-Hiện tại: đặc trưng thời gian trích xuất từ cột `date`.
+- add_time_features   : đặc trưng thời gian trích xuất từ cột `date`
+- get_feature_columns : danh sách đặc trưng đưa vào mô hình theo từng bộ (feature set)
 """
 from __future__ import annotations
 
 import numpy as np
 import pandas as pd
 
-from src.config import DATE_COL
+from src.config import DATE_COL, HUMIDITY_COLS, OTHER_COLS, TARGET, TEMP_COLS, WEATHER_COLS
 
 TIME_FEATURES = ["hour", "day_of_week", "is_weekend", "nsm", "hour_sin", "hour_cos"]
+
+# `hour` trùng thông tin với `nsm` (nsm chi tiết hơn tới từng 10 phút) → chỉ đưa nsm + sin/cos vào mô hình.
+MODEL_TIME_FEATURES = ["nsm", "hour_sin", "hour_cos", "day_of_week", "is_weekend"]
+
+# Các bộ đặc trưng dùng để so sánh trong thực nghiệm.
+#  - "sensors"   : chỉ cảm biến trong nhà (T1–T9, RH_1–RH_9)
+#  - "no_time"   : cảm biến + thời tiết + lights (gần với thiết lập của bài báo gốc)
+#  - "full"      : no_time + đặc trưng thời gian  ← bộ chính của nhóm
+# `rv1` được giữ trong mọi bộ như "biến đối chứng" (xem ghi chú bên dưới); `rv2` bị loại vì trùng hoàn toàn rv1.
+FEATURE_SETS = {
+    "sensors": TEMP_COLS + HUMIDITY_COLS,
+    "no_time": TEMP_COLS + HUMIDITY_COLS + WEATHER_COLS + OTHER_COLS,
+    "full": TEMP_COLS + HUMIDITY_COLS + WEATHER_COLS + OTHER_COLS + MODEL_TIME_FEATURES,
+}
+CONTROL_FEATURE = "rv1"
+DROPPED_FEATURES = {
+    "rv2": "trùng hoàn toàn với rv1",
+    "hour": "trùng thông tin với nsm",
+}
 
 
 def add_time_features(df: pd.DataFrame, date_col: str = DATE_COL) -> pd.DataFrame:
@@ -36,8 +56,34 @@ def add_time_features(df: pd.DataFrame, date_col: str = DATE_COL) -> pd.DataFram
     return out
 
 
+def get_feature_columns(feature_set: str = "full", include_control: bool = True) -> list[str]:
+    """Trả về danh sách cột đặc trưng của một bộ.
+
+    include_control=True giữ `rv1` – một biến hoàn toàn ngẫu nhiên. Khi phân tích độ quan trọng đặc trưng, mọi
+    đặc trưng xếp hạng thấp hơn rv1 được xem là không mang thông tin hữu ích (ý tưởng của bài báo gốc).
+    """
+    if feature_set not in FEATURE_SETS:
+        raise KeyError(f"Không có bộ đặc trưng '{feature_set}'. Chọn trong: {list(FEATURE_SETS)}")
+    cols = list(FEATURE_SETS[feature_set])
+    if include_control:
+        cols.append(CONTROL_FEATURE)
+    return cols
+
+
+def make_xy(df: pd.DataFrame, feature_set: str = "full", include_control: bool = True):
+    """Tách X (đặc trưng) và y (mục tiêu). Tự thêm đặc trưng thời gian nếu cần."""
+    if "nsm" not in df.columns:
+        df = add_time_features(df)
+    cols = get_feature_columns(feature_set, include_control)
+    return df[cols], df[TARGET]
+
+
 if __name__ == "__main__":
     from src.data_loader import load_raw_data
 
     data = add_time_features(load_raw_data())
     print(data[["date", *TIME_FEATURES]].head(8))
+    print()
+    for name in FEATURE_SETS:
+        print(f"{name:>8}: {len(get_feature_columns(name))} đặc trưng")
+    print("Loại bỏ:", DROPPED_FEATURES)
