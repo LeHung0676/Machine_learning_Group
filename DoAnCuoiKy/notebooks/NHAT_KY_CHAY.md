@@ -195,3 +195,92 @@ Hình mới `02_corr_with_target.png` được lưu vào `reports/figures/`.
 - [ ] Sửa thứ tự trong nhận xét Phần 3.1 (`T2` đứng trước `lights`; có `hour_cos` sau `RH_out`).
 - [ ] Ô tóm tắt ghi "Tóm tắt EDA (phần 1–2)" và đặt **trước** Phần 3. Nên bổ sung tóm tắt cho Phần 3.
 - [ ] File gốc thiếu `id` cho các ô (nbformat 4.5 cảnh báo `MissingIDFieldWarning`). Bản chốt đã được chuẩn hóa thêm `id`.
+
+---
+---
+
+# Nhật ký chạy notebook `02_edact.ipynb`
+
+**Ngày:** 15/11/2026
+**Notebook kiểm tra:** `02_edact.ipynb` (EDA phần 1–3; so với `3.1_eda.ipynb` có thêm **3.2 Đa cộng tuyến** và **3.3 VIF**)
+**Môi trường:** macOS, Python của Anaconda (`~/anaconda3/bin/python`, Python 3.13, pandas 2.3.3), kernel `python3`, chạy bằng `nbclient`
+**Code trên repo lúc kiểm tra:** commit `9b386d2` (đã pull 9 commit mới của nhóm trước khi chạy; các commit này không đụng tới `DoAnCuoiKy/`)
+
+---
+
+## Lần thử 1: chạy nguyên bản (20:15:03). LỖI
+
+- **Hiện tượng:** dừng ở ô code đầu tiên (`df = load_raw_data()`):
+  ```
+  FileNotFoundError: Không tìm thấy .../DoAnCuoiKy/data/raw/energydata_complete.csv.
+  ```
+- **Nguyên nhân:** lỗi đường dẫn dữ liệu, tồn từ 14/11, **vẫn chưa sửa**.
+- **Khắc phục tạm:** trỏ `load_raw_data()` tới `data/energydata_complete.csv`, chỉ trong kernel, không sửa code.
+
+## Lần thử 2: chạy sau khi trỏ lại đường dẫn (20:15:06). LỖI
+
+- **Hiện tượng:** Phần 1 chạy xong (2 hình), dừng ở `from src.features import add_time_features`:
+  ```
+  File .../DoAnCuoiKy/src/features.py:10
+      >>>>>>> 4d1608ea44602e52ed03a5da141d94c452ca596c
+  SyntaxError: invalid decimal literal
+  ```
+- **Nguyên nhân:** `src/features.py` còn sót dấu xung đột merge từ commit `4a578ac`. Lỗi này đã ghi ở nhật ký `3.1_eda`
+  sáng 15/11, **vẫn chưa sửa** sau 9 commit mới của nhóm.
+- **Khắc phục tạm:** nạp bản `src/features.py` của commit `a8f37ae`, chỉ trong kernel, không sửa file trên repo.
+
+## Lần thử 3: chạy với cả 2 cách khắc phục tạm (20:15:10). OK
+
+- Tất cả 41 ô (16 ô code) chạy xong, không lỗi, tạo 8 hình.
+- **Phần 1 – 3.1:** output giống hệt `3.1_eda.ipynb` (đã đối chiếu ở nhật ký trên), kể cả lệch nhẹ về thứ tự
+  `T2`/`lights` trong nhận xét 3.1.
+- **Đối chiếu nhận xét Phần 3.2–3.3 với kết quả thực tế:**
+
+  | Nhận xét viết trong notebook | Kết quả thực tế | Khớp |
+  |---|---|---|
+  | 22 cặp đặc trưng có \|r\| > 0,85 | 22 cặp | ✓ |
+  | Chủ yếu nhiệt độ–nhiệt độ và độ ẩm–độ ẩm | 15 cặp nhiệt độ, 7 cặp độ ẩm, 0 cặp khác | ✓ |
+  | Mạnh nhất `T6` – `T_out`, r ≈ 0,975 | `T6` – `T_out` = 0.975 | ✓ |
+  | `T9` gần trùng `T3`, `T5`, `T7` (r > 0,9) | 0.901; 0.911; 0.945 | ✓ |
+  | 14/25 đặc trưng có VIF > 10 | 14 / 25 | ✓ |
+  | `T_out` ~147, `Tdewpoint` ~86 | 146.8; 86.1 | ✓ |
+
+- Đã xem hình mới `02_corr_heatmap_inputs.png`: hiển thị đúng ma trận tam giác 25×25, tiếng Việt không lỗi font.
+
+## Lần thử 4: chạy lặp 10 lần (20:15:43–20:16:24). OK
+
+Mỗi lần chạy lại từ đầu với kernel mới (cùng 2 cách khắc phục tạm), lưu thành file riêng, so **toàn bộ output
+chữ/bảng** và **hash từng hình** với lần 1.
+
+| Lần | File | Thời điểm | Thời gian chạy | Lỗi | Hình | Giống lần 1 |
+|---|---|---|---|---|---|---|
+| 1 | `02_edact_run01.ipynb` | 20:15:43 | 4.4 s | 0 | 8 | ✓ |
+| 2 | `02_edact_run02.ipynb` | 20:15:48 | 4.4 s | 0 | 8 | ✓ |
+| 3 | `02_edact_run03.ipynb` | 20:15:52 | 4.4 s | 0 | 8 | ✓ |
+| 4 | `02_edact_run04.ipynb` | 20:15:57 | 4.4 s | 0 | 8 | ✓ |
+| 5 | `02_edact_run05.ipynb` | 20:16:01 | 4.3 s | 0 | 8 | ✓ |
+| 6 | `02_edact_run06.ipynb` | 20:16:06 | 4.3 s | 0 | 8 | ✓ |
+| 7 | `02_edact_run07.ipynb` | 20:16:11 | 4.4 s | 0 | 8 | ✓ |
+| 8 | `02_edact_run08.ipynb` | 20:16:15 | 4.3 s | 0 | 8 | ✓ |
+| 9 | `02_edact_run09.ipynb` | 20:16:20 | 4.4 s | 0 | 8 | ✓ |
+| 10 | `02_edact_run10.ipynb` | 20:16:24 | 4.4 s | 0 | 8 | ✓ |
+
+**Vì sao 10 lần giống hệt nhau:** notebook chỉ đọc dữ liệu, tính thống kê, tương quan, VIF (nghịch đảo ma trận,
+có tính xác định) và vẽ hình. **Không có bước ngẫu nhiên**, nên notebook ổn định và tái lập được.
+7 hình `02_*.png` cũ sinh lại **giống từng byte** với bản đã có trên repo.
+
+**Chốt:** output của lần 10 được ghi vào file gốc `02_edact.ipynb`.
+Hình mới `02_corr_heatmap_inputs.png` được lưu vào `reports/figures/`.
+
+---
+
+## Việc còn tồn đọng (sau lần kiểm tra `02_edact`)
+
+- [ ] 🔴 **Gỡ xung đột merge trong `src/features.py`**: vẫn còn, làm hỏng mọi chỗ import file này.
+- [ ] **Sửa lỗi đường dẫn dữ liệu** (`data/raw/` vẫn trống).
+- [ ] `02_edact.ipynb` là bản mở rộng của `3.1_eda.ipynb` (Phần 1 → 3.1 giống hệt), và cả hai trùng Phần 1–2 với `02_eda .ipynb`.
+  Hiện có **3 notebook EDA chồng nội dung**. Nên giữ `02_edact` làm bản chính và bỏ hoặc gộp hai bản kia.
+- [ ] Tiêu đề trong notebook vẫn ghi "02 – Khám phá dữ liệu (EDA)". Ô "Tóm tắt EDA (phần 1–2)" đặt trước Phần 3, chưa có tóm tắt cho Phần 3.
+- [ ] Bảng top-10 cặp tương quan (ô 3.2) có tên cột `level_0`, `level_1`. Nên đặt tên rõ, ví dụ `feature_1`, `feature_2`.
+- [ ] Hình heatmap 3.2 bị đường lưới của style `whitegrid` vẽ đè lên các ô (chỉ ảnh hưởng thẩm mỹ).
+- [ ] Bảng VIF chỉ hiển thị 12 dòng đầu trong khi nhận xét nói 14 đặc trưng VIF > 10. Nên hiện `head(14)` để người đọc tự kiểm.
