@@ -12,7 +12,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default=None)
     ap.add_argument("--member", default="team")
-    ap.add_argument("--models", nargs="+", default=["lasso", "lightgbm"])
+    ap.add_argument("--models", nargs="+", default=None,
+                    help="Mặc định lấy từ mục run.models trong config")
     args = ap.parse_args()
     out = HousePricePipeline(args.config, args.member).run(args.models)
     print(f"Submission saved to: {out}")

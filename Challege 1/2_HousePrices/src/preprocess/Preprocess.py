@@ -68,7 +68,9 @@ class Preprocessor:
         # thay vì sinh ra một cột mới mà model chưa từng thấy.
         for c, levels in self.cat_levels_.items():
             if c in X.columns:
-                X[c] = pd.Categorical(X[c].astype(str), categories=levels)
+                col = X[c].astype(str)
+                col = col.where(col.isin(levels))
+                X[c] = pd.Categorical(col, categories=levels)
         cat_cols = list(self.cat_levels_.keys())
         cat_cols = [c for c in cat_cols if c in X.columns]
         if cat_cols:

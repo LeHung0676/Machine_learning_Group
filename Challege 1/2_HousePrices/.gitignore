@@ -1,10 +1,26 @@
+# Python
 __pycache__/
 *.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
 .ipynb_checkpoints/
+
+# Môi trường ảo
 .venv/
 venv/
-# Dữ liệu & model lớn không đưa lên Git
+env/
+
+# Dữ liệu trung gian và model: mỗi người tự sinh bằng main.py, đừng đưa lên Git
 data/interim/*
 data/processed/*
 models/*
+
+# Tracking sinh ra tự động. KHÔNG commit, nếu không repo sẽ phình hàng nghìn file
+mlruns/
+catboost_info/
+reports/experiments/*/
+
+# Giữ lại thư mục rỗng
 !**/.gitkeep

@@ -1,11 +1,24 @@
+# Bắt buộc
 pandas
 numpy
 scikit-learn
-lightgbm
 scipy
-matplotlib
-seaborn
 pyyaml
 joblib
+matplotlib
+seaborn
+
+# Chạy notebook
 jupyter
+ipykernel
+
+# Kiểm thử
 pytest
+
+# Model tùy chọn: thiếu cái nào thì pipeline tự bỏ qua model đó
+lightgbm
+xgboost
+catboost
+
+# Tracking tùy chọn
+mlflow

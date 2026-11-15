@@ -13,21 +13,39 @@ import pandas as pd
 
 from src.ensemble import Ensemble
 from src.evaluation.Evaluation import Evaluator, rmse
-from src.model.Lasso import LassoModel
 from src.preprocess.Clean import Cleaner
 from src.preprocess.Feature import FeatureEngineer
 from src.preprocess.Preprocess import Preprocessor
 from src.tracking.tracking import Tracker
 from src.utils.data_loader import get_path, load_config, load_raw, save_df
 
-MODELS = {"lasso": LassoModel}
+# ---------- Bảng đăng ký model ----------
+# Mỗi model nằm một file riêng trong src/model/, giống quy ước của repo mẫu.
+# Model cần thư viện ngoài (lightgbm, xgboost, catboost) chỉ được đăng ký khi
+# thư viện đó đã cài. Phải kiểm tra bằng find_spec chứ không dùng try/except
+# quanh câu import, vì các file đó cố tình import thư viện bên trong hàm,
+# nên câu import ở đây luôn thành công dù thư viện chưa có.
+MODELS: dict[str, type] = {}
 
-# LightGBM là tùy chọn. Phải kiểm tra bằng find_spec chứ không dùng try/except
-# quanh câu import, vì LightGBM.py cố tình import lightgbm bên trong hàm,
-# nên câu import ở đây luôn thành công dù thư viện chưa được cài.
-if importlib.util.find_spec("lightgbm") is not None:
-    from src.model.LightGBM import LightGBMModel
-    MODELS["lightgbm"] = LightGBMModel
+
+def _register(name: str, module_path: str, class_name: str, requires: str | None = None):
+    if requires is not None and importlib.util.find_spec(requires) is None:
+        return
+    MODELS[name] = getattr(importlib.import_module(module_path), class_name)
+
+
+_register("lasso",        "src.model.Lasso",        "LassoModel")
+_register("elasticnet",   "src.model.ElasticNet",   "ElasticNetModel")
+_register("kernelridge",  "src.model.KernelRidge",  "KernelRidgeModel")
+_register("randomforest", "src.model.RandomForest", "RandomForestModel")
+_register("lightgbm",     "src.model.LightGBM",     "LightGBMModel",  requires="lightgbm")
+_register("xgboost",      "src.model.XGBoost",      "XGBoostModel",   requires="xgboost")
+_register("catboost",     "src.model.CatBoost",     "CatBoostModel",  requires="catboost")
+
+
+def available_models() -> list[str]:
+    """Danh sách model dùng được trên máy hiện tại."""
+    return list(MODELS)
 
 
 class HousePricePipeline:
@@ -53,8 +71,10 @@ class HousePricePipeline:
         X_test = test.drop(columns=[d["id_col"]])
 
         fe = FeatureEngineer(cfg)
-        X = fe.select(fe.create(X))
-        X_test = fe.select(fe.create(X_test))
+        # .copy() để gom lại bộ nhớ: Feature tạo gần 30 cột bằng cách gán lần lượt,
+        # khiến pandas cảnh báo DataFrame bị phân mảnh ở các bước sau.
+        X = fe.select(fe.create(X)).copy()
+        X_test = fe.select(fe.create(X_test)).copy()
 
         self.preprocessor = Preprocessor(cfg)
         X = self.preprocessor.fit_transform(X)
@@ -68,8 +88,11 @@ class HousePricePipeline:
         return X.reset_index(drop=True), y.reset_index(drop=True), X_test, test_ids
 
     # ---------- chạy toàn bộ ----------
-    def run(self, model_names=("lasso", "lightgbm")):
+    def run(self, model_names=None):
         cfg, d = self.cfg, self.cfg["data"]
+        # Không truyền thì lấy từ config, không có trong config thì lấy tất cả
+        if model_names is None:
+            model_names = cfg.get("run", {}).get("models") or available_models()
         tracker = Tracker(get_path(cfg, "experiments"), "pipeline", self.member)
 
         missing = [m for m in model_names if m not in MODELS]

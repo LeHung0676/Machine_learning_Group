@@ -1,0 +1,16 @@
+# Config riêng của thành viên. Sao chép thành config_<ten_ban>.yaml.
+# Chỉ ghi phần bạn muốn đổi, phần còn lại kế thừa từ global_config.yaml.
+#
+# Chạy:  python main.py --config config/config_minh.yaml --member minh
+
+extends: global_config.yaml
+
+run:
+  models: [lasso, elasticnet]      # chạy ít model cho nhanh khi đang thử
+
+models:
+  lasso:
+    alpha: 0.0008                  # alpha riêng mình đang dò
+
+ensemble:
+  method: stacking
