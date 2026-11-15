@@ -72,4 +72,4 @@ Tên thể loại theo bảng mã của bộ dữ liệu gốc, cần đối chi
 
 - Phương pháp: Stacking 6 model (thêm LightGBM)
 - Accuracy OOF: 0.7021 · F1 macro: 0.7534
-- Điểm Kaggle: *chưa nộp*
+- Điểm Kaggle (nộp 2026-11-15, late submission): **Public 0.73571** · Private 0.71111
