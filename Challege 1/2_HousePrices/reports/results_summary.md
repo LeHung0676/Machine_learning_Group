@@ -21,7 +21,7 @@ Số thấp hơn là tốt hơn. Cột *Kaggle* điền sau khi nộp `submissio
 
 | Ngày | Người | Phương pháp | Model thành phần | RMSE OOF | Kaggle |
 |------|-------|-------------|------------------|----------|--------|
-| 2026-11-15 | team | Blending | lasso + elasticnet + kernelridge + randomforest | 0.10896 | |
+| 2026-11-15 | team | Blending | lasso + elasticnet + kernelridge + randomforest | 0.10896 | **0.12363** |
 | 2026-11-15 | team | Stacking | 4 model như trên | 0.10867 | |
 | 2026-11-15 | team | Voting | 4 model như trên | 0.10950 | |
 | 2026-11-15 | team | Blending | thêm cả Ridge + HistGB (6 model) | 0.10841 | |
@@ -46,12 +46,18 @@ LightGBM mạnh hơn hai cái này nhiều, nên đây là việc đáng làm nh
 **Độ lệch chuẩn giữa các fold khoảng 0.007.** Nghĩa là mọi cải thiện nhỏ hơn 0.007
 chưa thể kết luận là thật. Muốn chắc thì chạy lại với seed khác.
 
-## Model tốt nhất hiện tại
+## Model đã nộp Kaggle
 
-- Phương pháp: Stacking 6 model
-- RMSE OOF: 0.10839
-- Điểm Kaggle: *chưa nộp*
+- Phương pháp: Blending 4 model (lasso, elasticnet, kernelridge, randomforest) — cấu hình mặc định của `main.py`
+- RMSE OOF: 0.10896
+- **Điểm Kaggle (Public): 0.12363**
 - File nộp: `SUBMIT-summarize_report/submission.csv`
+
+Stacking 6 model có RMSE OOF thấp hơn một chút (0.10839) nhưng chưa nộp Kaggle.
+Chênh lệch 0.00057 nhỏ hơn nhiều so với độ lệch chuẩn giữa các fold (~0.007), nên chưa đủ để kết luận là tốt hơn.
+
+**Vì sao điểm Kaggle cao hơn RMSE OOF (+0.0147):** OOF đo trên tập train đã bỏ 2 ngoại lai,
+còn tập test giữ nguyên mọi ca khó; Public Score chỉ tính khoảng một nửa tập test nên dao động lớn hơn.
 
 ## Cách ghi thêm dòng mới
 
