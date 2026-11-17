@@ -66,3 +66,61 @@ chuẩn hóa** dữ liệu trước khi dùng Ridge/Lasso, để phạt công b�
 - **Hạn chế:** chỉ biểu diễn được quan hệ tuyến tính (trừ khi tự tạo đặc trưng phi tuyến), nhạy với ngoại lệ.
 - **Lý do chọn:** làm mô hình tham chiếu "đơn giản nhất có học"; Ridge/Lasso xử lý đa cộng tuyến mạnh của bộ dữ
   liệu; hệ số giúp trả lời câu hỏi đặc trưng nào ảnh hưởng (RQ3).
+
+## 3. Mạng nơ-ron truyền thẳng (MLP – Multi-Layer Perceptron)
+
+### 3.1 Cấu trúc
+
+MLP gồm lớp đầu vào, một hoặc nhiều **lớp ẩn** và lớp đầu ra. Mỗi nơ-ron tính tổng có trọng số của đầu vào rồi
+đi qua **hàm kích hoạt phi tuyến**:
+
+$$\mathbf{h}^{(l)} = \sigma\big(W^{(l)} \mathbf{h}^{(l-1)} + \mathbf{b}^{(l)}\big), \qquad \hat{y} = \mathbf{w}^{\top}\mathbf{h}^{(L)} + b$$
+
+Với bài toán hồi quy, lớp đầu ra là một nơ-ron tuyến tính (không có hàm kích hoạt).
+
+Hàm kích hoạt phổ biến: **ReLU** $\sigma(z) = \max(0, z)$ – đơn giản, tránh hiện tượng gradient biến mất của
+sigmoid/tanh. Nhờ các hàm phi tuyến, MLP có thể xấp xỉ quan hệ phi tuyến phức tạp (định lý xấp xỉ phổ quát).
+
+### 3.2 Huấn luyện
+
+- **Hàm mất mát:** sai số bình phương trung bình (MSE) + phạt L2 trên trọng số (tham số `alpha` trong scikit-learn).
+- **Lan truyền ngược (backpropagation):** tính gradient của hàm mất mát theo từng trọng số bằng quy tắc chuỗi.
+- **Tối ưu:** Adam – gradient descent với tốc độ học thích nghi cho từng tham số.
+- **Early stopping:** tách một phần dữ liệu train làm validation nội bộ, dừng khi sai số trên đó không giảm nữa.
+
+### 3.3 Siêu tham số chính
+
+| Siêu tham số | Ý nghĩa |
+|---|---|
+| `hidden_layer_sizes` | Số lớp ẩn và số nơ-ron mỗi lớp, vd. (64, 32) |
+| `alpha` | Hệ số phạt L2 – chống overfit |
+| `learning_rate_init` | Tốc độ học ban đầu |
+| `early_stopping`, `max_iter` | Điều kiện dừng |
+
+### 3.4 Ưu điểm, hạn chế và lý do lựa chọn
+
+- **Ưu điểm:** linh hoạt, mô hình hóa được quan hệ phi tuyến và tương tác giữa đặc trưng.
+- **Hạn chế:** cần **chuẩn hóa dữ liệu**, nhạy với siêu tham số và khởi tạo ngẫu nhiên, khó diễn giải, thường cần
+  nhiều dữ liệu hơn mô hình cây để vượt trội trên dữ liệu dạng bảng.
+- **Lý do chọn:** đại diện cho hướng tiếp cận học sâu cơ bản, để so sánh với ensemble cây trên cùng bộ dữ liệu.
+
+## 4. Độ đo đánh giá mô hình hồi quy
+
+Với $n$ mẫu, giá trị thật $y_i$, dự đoán $\hat{y}_i$, trung bình $\bar{y}$:
+
+| Độ đo | Công thức | Ý nghĩa |
+|---|---|---|
+| MAE | $\frac{1}{n}\sum \lvert y_i - \hat{y}_i \rvert$ | Sai lệch trung bình (Wh). Ít nhạy với ngoại lệ |
+| RMSE | $\sqrt{\frac{1}{n}\sum (y_i - \hat{y}_i)^2}$ | Phạt nặng lỗi lớn (các đỉnh tiêu thụ). Cùng đơn vị Wh |
+| R² | $1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}$ | Tỷ lệ phương sai giải thích được; 0 = ngang dự đoán trung bình, có thể âm |
+| MAPE | $\frac{100\%}{n}\sum \left\lvert \frac{y_i - \hat{y}_i}{y_i} \right\rvert$ | Sai số tương đối; dùng được vì $y \ge 10$ Wh |
+
+**Lựa chọn của nhóm:** RMSE là độ đo chính (bài toán quan tâm cả các đỉnh tiêu thụ; so sánh được với bài báo gốc);
+MAE và R² báo cáo kèm để diễn giải. Mọi độ đo tính trên **đơn vị Wh gốc**, kể cả khi mô hình huấn luyện trên `log1p(y)`.
+
+## 5. Đánh giá trên dữ liệu chuỗi thời gian
+
+- **Chia theo thời gian:** train là quá khứ, validation/test là tương lai. Chia ngẫu nhiên gây **rò rỉ dữ liệu** vì
+  các mẫu liền kề (cách 10 phút) gần như giống nhau (Bergmeir & Benítez, 2012).
+- **TimeSeriesSplit:** cross-validation kiểu "cửa sổ mở rộng" – fold $k$ huấn luyện trên $k$ đoạn đầu và đánh giá
+  trên đoạn kế tiếp, nên không bao giờ dùng tương lai để dự đoán quá khứ.

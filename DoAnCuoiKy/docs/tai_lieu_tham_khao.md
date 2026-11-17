@@ -18,4 +18,11 @@
 9. Bergmeir, C., & Benítez, J. M. (2012). On the use of cross-validation for time series predictor evaluation.
    *Information Sciences, 191*, 192–213.
 
-> Danh sách sẽ được bổ sung khi viết chương 2 (cơ sở lý thuyết).
+10. Tibshirani, R. (1996). Regression shrinkage and selection via the lasso. *Journal of the Royal Statistical
+    Society: Series B, 58*(1), 267–288.
+11. Kingma, D. P., & Ba, J. (2015). Adam: A method for stochastic optimization. *International Conference on
+    Learning Representations (ICLR)*.
+12. Ke, G., et al. (2017). LightGBM: A highly efficient gradient boosting decision tree. *Advances in Neural
+    Information Processing Systems, 30*.
+
+> Danh sách sẽ được bổ sung khi hoàn thiện báo cáo.
