@@ -470,3 +470,44 @@ MAE trên validation theo mức tiêu thụ thực tế (RF):
 
 - [ ] Số thứ tự notebook nhảy từ 04 sang 06 (chưa có `05_*.ipynb`).
 - [ ] `RF điều chuẩn + log` có val_R² thấp hơn bản không log (0.131 so với 0.157); nên nêu rõ trong báo cáo cùng với nhận xét về RMSE.
+
+---
+---
+
+# Hoàn thiện `02_eda.ipynb` (18/11/2026)
+
+Xử lý các mục còn tồn đọng của notebook EDA:
+
+| # | Vấn đề | Cách sửa |
+|---|---|---|
+| 1 | Bảng top-10 cặp tương quan (3.2) có tên cột `level_0`, `level_1` | Đặt tên `đặc trưng 1`, `đặc trưng 2`, đánh lại chỉ số 0–9 |
+| 2 | Bảng VIF chỉ hiện 12 dòng trong khi nhận xét nói 14 đặc trưng VIF > 10 | Hiện đúng các đặc trưng có VIF > 10 (14 dòng, thêm `RH_3` 10.8, `T5` 10.5) |
+| 3 | Heatmap tương quan (3.2) bị đường lưới của style `whitegrid` vẽ đè lên ô | Tắt lưới (`ax.grid(False)`); thêm tương tự cho heatmap giờ × thứ (2.3) để thống nhất |
+| 4 | Mục 4.3 ghi nguồn "Notebook 01" cho lỗi số lưu dạng chuỗi | Sửa thành `src/data_loader.py` |
+
+## Chạy lặp 10 lần sau khi sửa
+
+Chạy tự động bằng nbconvert, mỗi lần một kernel mới, nối tiếp nhau; mốc thời gian là thời điểm thực tế bắt đầu.
+
+| Lần | File | Bắt đầu | Thời gian chạy | Lỗi | Hình | Giống lần 1 |
+|---|---|---|---|---|---|---|
+| 1 | `02_eda_v4_run01.ipynb` | 23:17:54 | 5.8 s | 0 | 10 | ✓ |
+| 2 | `02_eda_v4_run02.ipynb` | 23:18:00 | 5.3 s | 0 | 10 | ✓ |
+| 3 | `02_eda_v4_run03.ipynb` | 23:18:05 | 5.3 s | 0 | 10 | ✓ |
+| 4 | `02_eda_v4_run04.ipynb` | 23:18:10 | 5.6 s | 0 | 10 | ✓ |
+| 5 | `02_eda_v4_run05.ipynb` | 23:18:16 | 5.4 s | 0 | 10 | ✓ |
+| 6 | `02_eda_v4_run06.ipynb` | 23:18:21 | 5.5 s | 0 | 10 | ✓ (*) |
+| 7 | `02_eda_v4_run07.ipynb` | 23:18:27 | 5.6 s | 0 | 10 | ✓ |
+| 8 | `02_eda_v4_run08.ipynb` | 23:18:32 | 5.2 s | 0 | 10 | ✓ |
+| 9 | `02_eda_v4_run09.ipynb` | 23:18:38 | 5.4 s | 0 | 10 | ✓ |
+| 10 | `02_eda_v4_run10.ipynb` | 23:18:43 | 5.4 s | 0 | 10 | ✓ |
+
+(*) Lần 6, bộ so sánh tự động báo khác ở ô VIF (3.3). Kiểm tra lại: dòng `print` bị Jupyter ghi thành **2 đoạn**
+(`"Số đặc trưng có VIF > 10:"` + `" 14 / 25"`) thay vì 1. Ghép lại thì giống hệt lần 1, bảng VIF cũng giống hệt.
+Đây là cách Jupyter chia luồng in ra, **không phải lỗi** và không ảnh hưởng kết quả.
+
+- Mọi con số không đổi so với lần kiểm tra trước (skewness 3.39, IQR 175 Wh / 10.83%, 14/25 VIF > 10, ...).
+- Hình: chỉ `02_corr_heatmap_inputs.png` thay đổi (đã bỏ lưới). Heatmap giờ × thứ sinh lại giống từng byte
+  (seaborn vốn không vẽ lưới lên hình này). Các hình khác không đổi.
+
+**Chốt:** output của lần 10 được ghi vào `02_eda.ipynb`.
