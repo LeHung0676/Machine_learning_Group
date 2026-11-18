@@ -34,6 +34,7 @@ Loại bài toán: **Hồi quy (Regression)** có giám sát.
 ├── models/              # Mô hình đã huấn luyện (.joblib)
 ├── notebooks/           # Notebook EDA và thực nghiệm
 │   ├── NHAT_KY_CHAY.md  # Nhật ký kiểm thử notebook
+│   ├── archive/         # Các bản EDA cũ đã gộp vào 02_eda.ipynb
 │   └── test_runs/       # Bản lưu các lần chạy kiểm thử (*_runXX.ipynb)
 ├── reports/figures/     # Hình ảnh xuất ra cho báo cáo/slide/poster
 ├── src/                 # Mã nguồn Python dùng chung
@@ -75,8 +76,8 @@ Notebook (mở bằng Jupyter, chạy *Run All*):
 | Notebook | Nội dung |
 |---|---|
 | `01_data_overview.ipynb` | Tổng quan dữ liệu, kiểm tra chất lượng |
-| `02_edact.ipynb` | EDA đầy đủ: phân phối mục tiêu, xu hướng thời gian, tương quan, đa cộng tuyến (VIF) |
-| `01_eda.ipynb`, `02_eda.ipynb`, `3.1_eda.ipynb` | Các bản EDA trước, nội dung đã nằm trong `02_edact.ipynb` |
+| `02_eda.ipynb` | **EDA chính (bản tổng hợp)**: phân phối mục tiêu, xu hướng thời gian, tương quan, đa cộng tuyến (VIF), ngoại lệ biến đầu vào và kết luận tiền xử lý |
+| `archive/01_eda.ipynb`, `archive/3.1_eda.ipynb`, `archive/02_edact.ipynb` | Các bản EDA cũ, giữ để tham khảo; toàn bộ nội dung đã nằm trong `02_eda.ipynb` |
 
 ## 6. Thành viên nhóm
 
