@@ -1,5 +1,18 @@
 # Nhật ký chạy notebook EDA
 
+> **Quy ước tên file EDA (đổi tên ngày 18/11/2026).** Các mục nhật ký bên dưới giữ nguyên tên file tại thời điểm
+> ghi để đúng lịch sử. Bảng đối chiếu tên cũ → tên mới:
+>
+> | Phiên bản | Tên cũ | Nội dung | Notebook hiện tại | Bản chạy kiểm thử |
+> |---|---|---|---|---|
+> | v1 | `01_eda.ipynb` | Phần 1 | `archive/02_eda_v1_phan1.ipynb` | `test_runs/02_eda_v1_runXX` (cũ: `01_eda_runXX`) |
+> | v2 | `02_eda .ipynb` (14/11) | Phần 1–2 | `archive/02_eda_v2_phan1-2.ipynb` | `test_runs/02_eda_v2_runXX` (cũ: `02_eda_runXX`) |
+> | v3 | `3.1_eda.ipynb` | Phần 1–2, 3.1 | `archive/02_eda_v3_phan1-3.1.ipynb` | `test_runs/02_eda_v3_runXX` (cũ: `3.1_eda_runXX`) |
+> | v4 | `02_edact.ipynb` | Phần 1–3 | `archive/02_eda_v4_phan1-3.ipynb` | `test_runs/02_eda_v4_runXX` (cũ: `02_edact_runXX`) |
+> | v5 | `02_eda.ipynb` tải lên 18/11 | Phần 1–4.2 | – | `test_runs/02_eda_v5_runXX` (cũ: `02_eda_v2_runXX`) |
+> | v6 | `02_eda (1).ipynb` | Phần 1–4.3 | – | `test_runs/02_eda_v6_runXX` (cũ: `02_eda_v3_runXX`) |
+> | v7 | bản đã hoàn thiện | Phần 1–4.3 | **`02_eda.ipynb`** | `test_runs/02_eda_v7_runXX` (cũ: `02_eda_v4_runXX`) |
+
 **Ngày:** 14/11/2026
 **Notebook kiểm tra:** `01_eda.ipynb`, `02_eda .ipynb`
 **Môi trường:** macOS, Python của Anaconda (`~/anaconda3/bin/python`, Python 3.13), kernel `python3`, nbconvert 7.16.6
@@ -511,3 +524,22 @@ Chạy tự động bằng nbconvert, mỗi lần một kernel mới, nối ti�
   (seaborn vốn không vẽ lưới lên hình này). Các hình khác không đổi.
 
 **Chốt:** output của lần 10 được ghi vào `02_eda.ipynb`.
+
+---
+---
+
+# Đặt lại tên file EDA và hoàn thiện cấu trúc `02_eda.ipynb` (18/11/2026)
+
+- Đổi tên toàn bộ file EDA theo một quy ước `02_eda_vN` đánh số theo thứ tự thời gian (bảng đối chiếu ở đầu nhật ký):
+  - 4 bản cũ trong `archive/` → `02_eda_v1_phan1`, `02_eda_v3_phan1-3.1`, `02_eda_v4_phan1-3`; bổ sung lại
+    `02_eda_v2_phan1-2` (bản 14/11, lấy từ commit `a879026`, trước khi bị ghi đè).
+  - 70 file chạy kiểm thử EDA trong `test_runs/` → `02_eda_v1_runXX` … `02_eda_v7_runXX` (dùng `git mv`, nội dung không đổi).
+- Trong `02_eda.ipynb`: ô "Tóm tắt EDA (phần 1–2)" là mục cấp 2 đứng lẻ giữa Phần 2 và Phần 3 → đổi thành
+  **2.5 Tóm tắt Phần 1–2** (chỉ sửa tiêu đề, không đổi code). Phần kết luận chung là mục 4.3.
+- Kiểm tra sau khi sửa: chạy lại 1 lần (23:27:11, 5.9 s): 0 lỗi, 10 hình, **output giống hệt** `02_eda_v7_run10`.
+  Notebook giữ output của lần chạy v7 số 10.
+- Cập nhật tên file trong `README.md`.
+
+## Việc còn tồn đọng (EDA)
+
+- Không còn. Các mục tồn đọng của EDA ở các lần kiểm tra trước đều đã xử lý.

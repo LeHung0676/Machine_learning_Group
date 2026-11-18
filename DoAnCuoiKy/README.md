@@ -34,8 +34,8 @@ Loại bài toán: **Hồi quy (Regression)** có giám sát.
 ├── models/              # Mô hình đã huấn luyện (.joblib)
 ├── notebooks/           # Notebook EDA và thực nghiệm
 │   ├── NHAT_KY_CHAY.md  # Nhật ký kiểm thử notebook
-│   ├── archive/         # Các bản EDA cũ đã gộp vào 02_eda.ipynb
-│   └── test_runs/       # Bản lưu các lần chạy kiểm thử (*_runXX.ipynb)
+│   ├── archive/         # Các phiên bản EDA cũ (02_eda_v1 … v4) đã gộp vào 02_eda.ipynb
+│   └── test_runs/       # Bản lưu các lần chạy kiểm thử (<notebook>[_vN]_runXX.ipynb)
 ├── reports/figures/     # Hình ảnh xuất ra cho báo cáo/slide/poster
 ├── src/                 # Mã nguồn Python dùng chung
 ├── test/                # Kiểm thử tự động (pytest)
@@ -80,7 +80,7 @@ Notebook (mở bằng Jupyter, chạy *Run All*):
 | `03_preprocessing.ipynb` | Pipeline tiền xử lý, kiểm soát rò rỉ dữ liệu, chiến lược thực nghiệm |
 | `04_baseline_linear.ipynb` | Baseline, Linear/Ridge/Lasso và phân tích hệ số |
 | `06_log_target.ipynb` | Thí nghiệm biến đổi `log1p` biến mục tiêu (Ridge, Random Forest): đánh đổi MAE và RMSE |
-| `archive/01_eda.ipynb`, `archive/3.1_eda.ipynb`, `archive/02_edact.ipynb` | Các bản EDA cũ, giữ để tham khảo; toàn bộ nội dung đã nằm trong `02_eda.ipynb` |
+| `archive/02_eda_v1_phan1.ipynb` … `archive/02_eda_v4_phan1-3.ipynb` | Các phiên bản EDA trước (v1–v4), giữ để tham khảo; toàn bộ nội dung đã nằm trong `02_eda.ipynb` (v7) |
 
 ## 6. Thành viên nhóm
 
