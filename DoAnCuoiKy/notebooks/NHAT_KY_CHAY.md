@@ -320,3 +320,81 @@ Kiểm tra toàn bộ thư mục, phát hiện và sửa các lỗi sau:
 - [ ] Thống nhất đánh số notebook (tiêu đề `02_edact`/`3.1_eda` vẫn ghi "02"; có 2 file `01_`).
 - [ ] Bổ sung tóm tắt Phần 3 trong `02_edact`, đặt tên cột rõ cho bảng cặp tương quan (`level_0`/`level_1`), hiện `head(14)` cho bảng VIF.
 - [ ] `app/` chưa có demo Streamlit như README mô tả.
+
+---
+---
+
+# Kiểm thử và gộp bản EDA mới (18/11/2026)
+
+**Notebook kiểm tra:** 2 bản EDA mới tải lên
+- **v2** = `02_eda.ipynb` (ghi đè bản cũ): Phần 1–4 (thêm **Phần 4. Ngoại lệ ở các biến đầu vào**).
+- **v3** = `02_eda (1).ipynb`: giống v2 + mục **4.3 Kết luận cho bước tiền xử lý**.
+
+**Môi trường:** macOS, Anaconda Python 3.13.9, kernel `python3`, nbconvert 7.16.6.
+
+## So sánh nội dung các bản EDA
+
+| Bản | Nội dung | Quan hệ |
+|---|---|---|
+| `01_eda` | Phần 1–2 | tập con của `02_edact` |
+| `3.1_eda` | Phần 1–2, 3.1 | tập con của `02_edact` |
+| `02_edact` | Phần 1–3 | tập con của v2 |
+| v2 | Phần 1–4 (4.1, 4.2) | tập con của v3 |
+| **v3** | Phần 1–4 + 4.3 Kết luận tiền xử lý | **đầy đủ nhất** |
+
+## Chạy lặp 10 lần mỗi bản
+
+Mỗi lần chạy với kernel mới, lưu thành file riêng, so **từng output** (chữ, bảng, hash từng hình) với lần 1.
+
+| Lần | File v2 | Thời điểm | Lỗi | Hình | Giống lần 1 | File v3 | Thời điểm | Lỗi | Hình | Giống lần 1 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `02_eda_v2_run01.ipynb` | 21:12:45 | 0 | 10 | ✓ | `02_eda_v3_run01.ipynb` | 21:13:43 | 0 | 10 | ✓ |
+| 2 | `02_eda_v2_run02.ipynb` | 21:12:52 | 0 | 10 | ✓ | `02_eda_v3_run02.ipynb` | 21:13:49 | 0 | 10 | ✓ |
+| 3 | `02_eda_v2_run03.ipynb` | 21:12:58 | 0 | 10 | ✓ | `02_eda_v3_run03.ipynb` | 21:13:54 | 0 | 10 | ✓ |
+| 4 | `02_eda_v2_run04.ipynb` | 21:13:03 | 0 | 10 | ✓ | `02_eda_v3_run04.ipynb` | 21:14:00 | 0 | 10 | ✓ |
+| 5 | `02_eda_v2_run05.ipynb` | 21:13:09 | 0 | 10 | ✓ | `02_eda_v3_run05.ipynb` | 21:14:05 | 0 | 10 | ✓ |
+| 6 | `02_eda_v2_run06.ipynb` | 21:13:14 | 0 | 10 | ✓ | `02_eda_v3_run06.ipynb` | 21:14:10 | 0 | 10 | ✓ |
+| 7 | `02_eda_v2_run07.ipynb` | 21:13:19 | 0 | 10 | ✓ | `02_eda_v3_run07.ipynb` | 21:14:16 | 0 | 10 | ✓ |
+| 8 | `02_eda_v2_run08.ipynb` | 21:13:25 | 0 | 10 | ✓ | `02_eda_v3_run08.ipynb` | 21:14:21 | 0 | 10 | ✓ |
+| 9 | `02_eda_v2_run09.ipynb` | 21:13:31 | 0 | 10 | ✓ | `02_eda_v3_run09.ipynb` | 21:14:26 | 0 | 10 | ✓ |
+| 10 | `02_eda_v2_run10.ipynb` | 21:13:37 | 0 | 10 | ✓ | `02_eda_v3_run10.ipynb` | 21:14:31 | 0 | 10 | ✓ |
+
+- 20/20 lần chạy: **0 lỗi**, mỗi lần 10 hình, output **giống hệt lần 1**. EDA không có bước ngẫu nhiên nên đây là kết quả mong đợi.
+- Output 20 ô code của v2 và v3 **giống hệt nhau**: v3 chỉ thêm một ô chữ (4.3).
+- 8 hình `02_*.png` đã có trên repo sinh lại **giống từng byte**. Có thêm 2 hình mới của Phần 4:
+  `02_input_outliers_boxplot.png`, `02_input_outliers_detail.png`.
+
+## Đối chiếu nhận xét trong notebook với số liệu thực tế
+
+Các số in trực tiếp trong output (skewness, phân vị, IQR, `lights`, cuối tuần/ngày thường, tương quan, VIF,
+bảng ngoại lệ) đều khớp nhận xét. Các nhận xét không in số trực tiếp được tính lại riêng:
+
+| Nhận xét | Thực tế | Khớp |
+|---|---|---|
+| Trung bình ~98, trung vị 60, max 1080; sau log1p ≈ 1.19 | 97.7; 60; 1080; 1.19 | ✓ |
+| Đỉnh phụ 11h ~133, đỉnh 18h ~190, đêm ~50 | 133; 190; 48–53 | ✓ |
+| T2 ~112, T3–T5 ~87–90 | 111.5; 87.1 / 89.9 / 90.4 | ✓ |
+| Trung bình theo tuần 75–122 Wh | 75.5 – 122.0 | ✓ |
+| 22 cặp đặc trưng có \|r\| > 0,85 | 22 | ✓ |
+| 14/25 đặc trưng VIF > 10 | 14/25 | ✓ |
+| Nhiệt độ trong nhà 14,9–29,9 °C; độ ẩm 1–100% | 14.89–29.86; 1.0–100.0 | ✓ |
+| `RH_6` trải 1–100%; `Visibility` phần lớn 40 km | 1.0–99.9; mode = 40 | ✓ |
+| `rv2` = `rv1` | trùng hoàn toàn | ✓ |
+| Số lưu dạng chuỗi có khoảng trắng (4.3) | ghi ở docstring `src/data_loader.py`, không phải trong notebook 01 | ✓ (nguồn ghi "Notebook 01" chưa chính xác) |
+
+## Chốt và sắp xếp file
+
+- **`02_eda.ipynb` = v3 + output lần chạy 10**: đây là bản EDA chính, đầy đủ nhất.
+- Bỏ file `02_eda (1).ipynb` (tên có dấu cách và ngoặc); nội dung đã nằm trong `02_eda.ipynb`.
+- Chuyển 3 bản cũ trùng nội dung `01_eda`, `3.1_eda`, `02_edact` vào `notebooks/archive/`.
+- 20 bản chạy lưu ở `test_runs/02_eda_v2_runXX.ipynb`, `test_runs/02_eda_v3_runXX.ipynb`.
+  (Các file `test_runs/02_eda_runXX.ipynb` cũ là bản v1 ngày 14/11.)
+- Cập nhật bảng notebook và cây thư mục trong `README.md`.
+
+## Việc còn tồn đọng
+
+- [x] Gộp các notebook EDA trùng nhau → `02_eda.ipynb` là bản chính.
+- [ ] Ô "Tóm tắt EDA (phần 1–2)" vẫn đặt trước Phần 3; mục 4.3 đã đóng vai trò kết luận chung.
+- [ ] Bảng cặp tương quan (3.2) vẫn có tên cột `level_0`, `level_1`; bảng VIF hiện 12 dòng trong khi nhận xét nói 14.
+- [ ] Mục 4.3 ghi nguồn "Notebook 01" cho lỗi định dạng số, thực tế nằm ở `src/data_loader.py`.
+- [ ] `app/` chưa có demo Streamlit như README mô tả.
