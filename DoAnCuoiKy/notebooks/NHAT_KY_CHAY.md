@@ -398,3 +398,75 @@ bảng ngoại lệ) đều khớp nhận xét. Các nhận xét không in số 
 - [ ] Bảng cặp tương quan (3.2) vẫn có tên cột `level_0`, `level_1`; bảng VIF hiện 12 dòng trong khi nhận xét nói 14.
 - [ ] Mục 4.3 ghi nguồn "Notebook 01" cho lỗi định dạng số, thực tế nằm ở `src/data_loader.py`.
 - [ ] `app/` chưa có demo Streamlit như README mô tả.
+
+---
+---
+
+# Kiểm thử `06_log_target.ipynb` (18/11/2026)
+
+**Nội dung:** thí nghiệm huấn luyện trên `log1p(Appliances)` rồi đổi ngược bằng `expm1` (`TransformedTargetRegressor`),
+so sánh Ridge và Random Forest điều chuẩn, có và không có log.
+**Môi trường:** macOS, Anaconda Python 3.13.9, kernel `python3`, nbconvert 7.16.6.
+**Cách chạy:** chạy tự động bằng nbconvert, mỗi lần một kernel mới, các lần nối tiếp nhau.
+Mốc thời gian dưới đây là thời điểm thực tế bắt đầu từng lần chạy (mỗi lần mất khoảng 10 giây).
+
+## Kiểm tra trước khi chạy
+
+- File tải lên **chưa có output** (4 ô code chưa chạy).
+- Quét lại **64 notebook đã chạy trước đó** (`notebooks/*.ipynb` và `test_runs/*.ipynb`): **không có ô nào lỗi**, không ô nào bị bỏ sót.
+- Chạy thử 1 lần (23:12:25): 0 lỗi.
+
+## Chạy lặp 10 lần
+
+| Lần | File | Bắt đầu | Thời gian chạy | Lỗi | Hình | Giống lần 1 |
+|---|---|---|---|---|---|---|
+| 1 | `06_log_target_run01.ipynb` | 23:12:52 | 9.9 s | 0 | 1 | ✓ |
+| 2 | `06_log_target_run02.ipynb` | 23:13:02 | 9.8 s | 0 | 1 | ✓ |
+| 3 | `06_log_target_run03.ipynb` | 23:13:12 | 9.5 s | 0 | 1 | ✓ |
+| 4 | `06_log_target_run04.ipynb` | 23:13:21 | 9.6 s | 0 | 1 | ✓ |
+| 5 | `06_log_target_run05.ipynb` | 23:13:31 | 9.8 s | 0 | 1 | ✓ |
+| 6 | `06_log_target_run06.ipynb` | 23:13:40 | 9.5 s | 0 | 1 | ✓ |
+| 7 | `06_log_target_run07.ipynb` | 23:13:50 | 9.7 s | 0 | 1 | ✓ |
+| 8 | `06_log_target_run08.ipynb` | 23:14:00 | 9.6 s | 0 | 1 | ✓ |
+| 9 | `06_log_target_run09.ipynb` | 23:14:09 | 9.8 s | 0 | 1 | ✓ |
+| 10 | `06_log_target_run10.ipynb` | 23:14:19 | 9.6 s | 0 | 1 | ✓ |
+
+**Vì sao 10 lần giống hệt nhau:** Random Forest cố định `random_state = RANDOM_STATE`, chia dữ liệu theo thời gian
+(`time_split`, `TimeSeriesSplit`) không xáo trộn, Ridge là nghiệm đóng → không có nguồn ngẫu nhiên nào thay đổi giữa các lần.
+
+## Kết quả (lần 10)
+
+| Mô hình | cv_RMSE | cv_MAE | val_RMSE | val_MAE | val_R² | val_MAPE % |
+|---|---|---|---|---|---|---|
+| Ridge | 96.663 | 57.619 | 85.597 | 51.050 | 0.139 | 62.761 |
+| Ridge + log | 96.363 | 46.596 | 85.336 | 40.193 | 0.144 | 38.744 |
+| RF điều chuẩn | **94.042** | 57.127 | **84.675** | 46.631 | **0.157** | 51.897 |
+| RF điều chuẩn + log | 95.436 | **46.323** | 85.966 | **37.388** | 0.131 | **32.996** |
+
+MAE trên validation theo mức tiêu thụ thực tế (RF):
+
+| Mức | Không log | Có log | Số mẫu |
+|---|---|---|---|
+| ≤ 60 Wh | 27.3 | 15.7 | 1544 |
+| 60–100 Wh | 37.3 | 19.2 | 826 |
+| 100–200 Wh | 42.4 | 31.2 | 360 |
+| > 200 Wh | 216.6 | 257.6 | 230 |
+
+## Đối chiếu nhận xét trong notebook
+
+| Nhận xét | Thực tế | Khớp |
+|---|---|---|
+| Log giảm MAE: RF ~46,7 → ~37,4; Ridge ~51 → ~40 | 46.63 → 37.39; 51.05 → 40.19 | ✓ |
+| Log giảm MAPE | RF 51.9 → 33.0; Ridge 62.8 → 38.7 | ✓ |
+| RMSE gần như không đổi hoặc tăng nhẹ | Ridge giảm nhẹ (−0,3); RF tăng (+1,4 cv, +1,3 val) | ✓ |
+| Có log dự đoán tốt mức nền ≤ 100 Wh | MAE giảm gần một nửa ở 2 nhóm thấp | ✓ |
+| Có log dự đoán **thấp** các đỉnh > 200 Wh | Sai số có dấu trung bình: không log −215,3; có log −257,6 Wh (kiểm tra riêng) | ✓ |
+
+- Hình `06_log_error_by_level.png` mới được lưu vào `reports/figures/`; 15 hình cũ không thay đổi.
+
+**Chốt:** output của lần 10 được ghi vào file gốc `06_log_target.ipynb`. Thêm 03, 04, 06 vào bảng notebook trong `README.md`.
+
+## Việc còn tồn đọng
+
+- [ ] Số thứ tự notebook nhảy từ 04 sang 06 (chưa có `05_*.ipynb`).
+- [ ] `RF điều chuẩn + log` có val_R² thấp hơn bản không log (0.131 so với 0.157); nên nêu rõ trong báo cáo cùng với nhận xét về RMSE.

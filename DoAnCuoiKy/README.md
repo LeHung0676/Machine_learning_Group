@@ -77,6 +77,9 @@ Notebook (mở bằng Jupyter, chạy *Run All*):
 |---|---|
 | `01_data_overview.ipynb` | Tổng quan dữ liệu, kiểm tra chất lượng |
 | `02_eda.ipynb` | **EDA chính (bản tổng hợp)**: phân phối mục tiêu, xu hướng thời gian, tương quan, đa cộng tuyến (VIF), ngoại lệ biến đầu vào và kết luận tiền xử lý |
+| `03_preprocessing.ipynb` | Pipeline tiền xử lý, kiểm soát rò rỉ dữ liệu, chiến lược thực nghiệm |
+| `04_baseline_linear.ipynb` | Baseline, Linear/Ridge/Lasso và phân tích hệ số |
+| `06_log_target.ipynb` | Thí nghiệm biến đổi `log1p` biến mục tiêu (Ridge, Random Forest): đánh đổi MAE và RMSE |
 | `archive/01_eda.ipynb`, `archive/3.1_eda.ipynb`, `archive/02_edact.ipynb` | Các bản EDA cũ, giữ để tham khảo; toàn bộ nội dung đã nằm trong `02_eda.ipynb` |
 
 ## 6. Thành viên nhóm
