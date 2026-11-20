@@ -3,18 +3,22 @@
 Challenge 2, môn Nhập môn Học máy. Phân loại bài hát vào 11 thể loại từ thuộc tính âm thanh,
 tên nghệ sĩ và tên bài. GVHD: TS. Đỗ Như Tài.
 
-## Kết quả hiện tại (5-fold OOF, seed 42, 14 396 dòng train)
+## Kết quả hiện tại (5-fold OOF phân tầng, seed 42, 14 396 dòng train)
 
-| Model | Accuracy | ± | F1 macro | Log loss |
+| Model | Accuracy | ± fold | F1 macro | Log loss |
 |---|---|---|---|---|
-| HistGradientBoosting | 0.6861 | 0.0042 | 0.7308 | 0.8557 |
-| Random Forest | 0.6754 | 0.0047 | 0.7158 | 0.9366 |
-| Extra Trees | 0.6752 | 0.0047 | 0.7148 | 0.9330 |
-| Logistic Regression | 0.6598 | 0.0074 | 0.6968 | 0.9352 |
-| Text (TF-IDF tên bài) | 0.4451 | 0.0050 | 0.4603 | 1.5789 |
-| **Stacking 5 model** | **0.7003** | | **0.7508** | 0.8500 |
+| LightGBM | 0.6895 | 0.0031 | 0.7378 | 1.0265 |
+| HistGradientBoosting | 0.6868 | 0.0059 | 0.7313 | 0.8560 |
+| Random Forest | 0.6772 | 0.0068 | 0.7177 | 0.9345 |
+| Extra Trees | 0.6755 | 0.0058 | 0.7134 | 0.9330 |
+| Logistic Regression | 0.6600 | 0.0072 | 0.6972 | 0.9352 |
+| Text (TF-IDF tên bài) | 0.4451 | 0.0050 | 0.4601 | 1.5790 |
+| **Stacking 6 model** | **0.7021** | | **0.7534** | 0.8489 |
 
-Bảng đầy đủ ở `reports/results_summary.md`. LightGBM, XGBoost, CatBoost đã có mã nhưng chưa chạy.
+**Điểm Kaggle (nộp 15/11/2026, late submission): Public 0.73571 · Private 0.71111.**
+
+Bảng đầy đủ (theo từng bước đặc trưng, Voting/Blending/Stacking, theo từng lớp) ở `reports/results_summary.md`.
+XGBoost và CatBoost đã có mã nhưng không nằm trong `run.models` của config nên chưa chạy.
 
 ## Bắt đầu
 

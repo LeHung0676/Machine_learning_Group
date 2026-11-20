@@ -543,3 +543,60 @@ Chạy tự động bằng nbconvert, mỗi lần một kernel mới, nối ti�
 ## Việc còn tồn đọng (EDA)
 
 - Không còn. Các mục tồn đọng của EDA ở các lần kiểm tra trước đều đã xử lý.
+
+
+---
+---
+
+# Notebook 07–09, mô hình cuối cùng và demo (20/11/2026)
+
+## Thêm mới
+
+| File | Nội dung |
+|---|---|
+| `notebooks/05_tree_models.ipynb` | Lấy từ nhánh `Minh` (commit `f85bf4f`) vào `main`, nội dung giữ nguyên |
+| `notebooks/07_gradient_boosting_mlp.ipynb` | HGB: lưới 18 cấu hình, chọn theo `cv_RMSE`; MLP 4 cấu hình; so sánh các họ mô hình (RQ2) |
+| `notebooks/08_lag_features.ipynb` | Đặc trưng lag, kiểm tra không rò rỉ, baseline persistence, so sánh có/không lag, ablation (RQ4) |
+| `notebooks/09_final_evaluation.ipynb` | Huấn luyện lại trên train + val, đánh giá một lần trên test, phân tích trôi dạt theo mùa, permutation importance (RQ3), lưu mô hình |
+| `src/features.py` | Thêm `add_lag_features`, `LAG_FEATURES`, bộ đặc trưng `full_lag` và `lag_time`; `make_xy` bỏ dòng NaN của lag |
+| `src/config.py` | Thêm `TABLES_DIR = reports/tables` |
+| `src/predict.py` | Nạp mô hình, tạo đặc trưng từ 60 phút lịch sử, dự báo 10 phút tới |
+| `app/app.py` | Demo Streamlit: xem lại một ngày (thực tế – dự báo – persistence), tự nhập số liệu, thông tin mô hình |
+| `models/best_model.joblib`, `models/best_model_info.json` | HGB, bộ `lag_time`, 12 đặc trưng, huấn luyện trên train + val |
+| `tests/test_lag_features.py` | 3 test: lag chỉ dùng quá khứ, NaN chỉ ở đầu chuỗi, báo lỗi rõ khi thiếu cột lag |
+| `tests/test_predict.py` | 3 test: dự báo 1 dòng khớp với cả chuỗi, báo lỗi khi thiếu lịch sử, mô hình đã lưu dự báo hợp lý |
+
+## Phân công đẩy lên GitHub (theo vai trò ở README)
+
+| Lượt | Người | Nội dung |
+|---|---|---|
+| 1 | Phạm Anh Minh | `src/config.py`, notebook 05 (từ nhánh `Minh`), notebook 07 + hình/bảng 07 |
+| 2 | Tất Võ Tiến Nam | `src/features.py` (đặc trưng lag), gộp `test/` → `tests/`, `tests/test_lag_features.py`, notebook 08 + hình/bảng 08 |
+| 3 | Lê Đức Anh | notebook 09 + hình/bảng 09, `models/best_model.*` |
+| 4 | Phạm Anh Minh | `src/predict.py`, `app/app.py`, `tests/test_predict.py` |
+| 5 | Lê Long Hưng | README gốc, `.gitignore` gốc, README đồ án, nhật ký này, README Challenge 2 |
+
+Thứ tự bắt buộc: notebook 08, 09 đọc `reports/tables/07_best_hgb_params.json` (lượt 1); notebook 08, 09 và `src/predict.py`
+cần đặc trưng lag trong `src/features.py` (lượt 2); demo cần mô hình do notebook 09 lưu (lượt 3).
+
+## Dọn dẹp
+
+- Gộp 2 thư mục kiểm thử: `test/test_features.py` → `tests/test_features.py`; xóa `test/requirements.txt`
+  (trùng `requirements.txt`). Lệnh chạy thống nhất: `python -m pytest tests/ -v`.
+
+## Kiểm tra
+
+- `python -m pytest tests/ -v`: **15/15 passed**.
+- Chạy notebook 07 → 08 → 09 theo thứ tự (Python 3.13, scikit-learn 1.9.1), mỗi notebook 1 lần: **0 lỗi**.
+  Thời gian: 07 ≈ 2 phút 10 giây, 08 ≈ 47 giây, 09 ≈ 18 giây.
+- Kết quả cố định nhờ `random_state = 42` (HGB, Random Forest, MLP, permutation importance).
+- `app/app.py` chưa chạy được bằng Streamlit thật trong môi trường kiểm tra (không cài được thư viện); logic đã chạy
+  thử bằng bộ giả lập: biểu đồ 144 điểm/ngày, không có giá trị thiếu, chỉ số khớp với notebook 09.
+
+## Việc cần nhóm làm
+
+- [ ] Chạy lại notebook 07 → 08 → 09 trên máy nhóm. Nếu nạp `best_model.joblib` báo lỗi phiên bản scikit-learn,
+      chạy lại notebook 09 để sinh lại mô hình.
+- [ ] Chạy `streamlit run app/app.py`, chụp màn hình cho slide/poster.
+- [ ] Đối chiếu cách bài báo gốc chọn tập test (ngẫu nhiên hay theo thời gian) trước khi so sánh R² trong báo cáo
+      (notebook 07, mục 3).

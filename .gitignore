@@ -1,0 +1,23 @@
+# Áp dụng cho toàn repo. Các thư mục con có thể có .gitignore riêng chi tiết hơn.
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE / hệ điều hành
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# File tạm của Office khi đang mở .docx/.xlsx
+~$*
