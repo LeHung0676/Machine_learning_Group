@@ -8,6 +8,7 @@ RAW_DATA_PATH = DATA_DIR / "raw" / "energydata_complete.csv"
 PROCESSED_DIR = DATA_DIR / "processed"
 MODELS_DIR = ROOT_DIR / "models"
 FIGURES_DIR = ROOT_DIR / "reports" / "figures"
+TABLES_DIR = ROOT_DIR / "reports" / "tables"      # bảng kết quả (.csv/.json) do notebook 07–09 sinh ra
 
 # ---- Cột dữ liệu ----
 DATE_COL = "date"
@@ -25,5 +26,5 @@ RANDOM_STATE = 42
 
 def ensure_dirs() -> None:
     """Tạo các thư mục đầu ra nếu chưa có."""
-    for d in (PROCESSED_DIR, MODELS_DIR, FIGURES_DIR):
+    for d in (PROCESSED_DIR, MODELS_DIR, FIGURES_DIR, TABLES_DIR):
         d.mkdir(parents=True, exist_ok=True)
