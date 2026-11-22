@@ -26,10 +26,10 @@
   "trained_on": "2016-01-11 17:00:00 → 2016-05-07 04:30:00 (train + validation)",
   "test_period": "2016-05-07 04:40:00 → 2016-05-27 18:00:00",
   "test_metrics": {
-    "MAE": 25.244,
-    "RMSE": 58.878,
+    "MAE": 25.248,
+    "RMSE": 58.888,
     "R2": 0.58,
-    "MAPE_%": 22.034
+    "MAPE_%": 22.025
   },
   "sklearn_version": "1.9.1",
   "notebook": "notebooks/09_final_evaluation.ipynb"

@@ -600,3 +600,104 @@ cần đặc trưng lag trong `src/features.py` (lượt 2); demo cần mô hìn
 - [ ] Chạy `streamlit run app/app.py`, chụp màn hình cho slide/poster.
 - [ ] Đối chiếu cách bài báo gốc chọn tập test (ngẫu nhiên hay theo thời gian) trước khi so sánh R² trong báo cáo
       (notebook 07, mục 3).
+
+---
+---
+
+# Chạy lại toàn bộ notebook 01–09, mỗi notebook 10 lần (22/11/2026)
+
+**Người chạy:** Lê Đức Anh
+**Code trên repo lúc kiểm tra:** commit `6849ffe` (sau lượt 3: notebook 09 + mô hình cuối cùng)
+**Môi trường:** macOS, Python 3.13.9 (Anaconda) + scikit-learn **1.9.1** (cùng phiên bản đã dùng để lưu `best_model.joblib`;
+Anaconda trên máy có sẵn 1.7.2 nên dùng một môi trường ảo riêng kế thừa các gói khác của Anaconda), pandas 2.3.3,
+numpy 2.3.5, matplotlib 3.10.6, seaborn 0.13.2, nbclient (kernel mới cho mỗi lần chạy).
+**Cách chạy:** mỗi **vòng** chạy lần lượt 01 → 09 (đúng thứ tự phụ thuộc: 08, 09 đọc kết quả của 07). Giữa hai vòng nghỉ
+**3–4 phút** (ngẫu nhiên 214–232 s). Mỗi lần chạy lưu thành một file riêng và ghi nhật ký riêng.
+
+## Tên file
+
+Tên file và tiêu đề bên trong đã khớp thứ tự **01 → 09**, không còn số trùng hay số nhảy:
+
+`01_data_overview` · `02_eda` · `03_preprocessing` · `04_baseline_linear` · `05_tree_models` · `06_log_target` ·
+`07_gradient_boosting_mlp` · `08_lag_features` · `09_final_evaluation`
+
+(Trên máy từng có bản `05_log_target.ipynb` trùng số 05 với `05_tree_models.ipynb`. File này giống hệt
+`06_log_target.ipynb` nên đã đổi lại thành `06_log_target.ipynb`, đúng với tiêu đề "06 – …" và hình `06_log_error_by_level.png`.)
+
+## Vòng 0 – chạy thử (15:04:40). LỖI
+
+- `08_lag_features.ipynb`, ô 4:
+  ```
+  AttributeError: 'float' object has no attribute 'round'
+  ```
+- **Nguyên nhân:** `data[...].corrwith(data[TARGET]).abs().max()` trả về `float` của Python (không phải số numpy),
+  kiểu này không có phương thức `.round()`. Bản trên repo chạy được ở máy khác là do khác phiên bản thư viện.
+- **Khắc phục (đã sửa trong code):** đổi thành `round(..., 3)`. Kết quả in ra không đổi (`0.26`).
+- 8 notebook còn lại chạy thử 0 lỗi.
+
+## Vòng 1–10 (15:09:53 – 16:28:36). OK
+
+Thời gian chạy từng notebook (giây):
+
+| Vòng | Bắt đầu | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | Tổng |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 15:09:53 | 2.1 | 5.4 | 11 | 4.4 | 25 | 9.1 | 133 | 34 | 14 | 239 s |
+| 2 | 15:17:29 | 1.9 | 5.4 | 12 | 4.1 | 24 | 8.9 | 134 | 34 | 14 | 237 s |
+| 3 | 15:25:08 | 1.9 | 5.3 | 11 | 4.3 | 24 | 9.2 | 133 | 34 | 15 | 238 s |
+| 4 | 15:32:53 | 2.0 | 5.3 | 11 | 4.2 | 23 | 8.8 | 120 | 31 | 14 | 219 s |
+| 5 | 15:41:27 | 2.2 | 5.7 | 11 | 4.1 | 24 | 8.7 | 125 | 32 | 17 | 230 s |
+| 6 | 15:48:55 | 1.8 | 5.2 | 11 | 4.1 | 24 | 9.0 | **204** | 31 | 13 | 304 s |
+| 7 | 15:57:32 | 1.9 | 5.2 | 11 | 4.0 | 23 | 8.8 | 118 | 31 | 15 | 219 s |
+| 8 | 16:07:14 | 2.3 | 5.4 | 11 | 4.1 | 23 | 8.9 | 118 | 31 | 13 | 218 s |
+| 9 | 16:14:27 | 1.8 | 5.3 | 11 | 4.2 | **210** | 9.0 | 120 | 31 | 13 | 404 s |
+| 10 | 16:24:58 | 1.9 | 5.2 | 11 | 4.0 | 23 | 9.0 | 118 | 31 | 15 | 218 s |
+
+- **90/90 lần chạy: 0 ô lỗi, 0 cảnh báo** (không có output `stderr`). Số hình mỗi lần đúng như nhau:
+  01: 1 · 02: 10 · 03: 1 · 04: 3 · 05: 1 · 06: 1 · 07: 2 · 08: 1 · 09: 3.
+- **Mọi output giống hệt lần 1** (so chữ, bảng và hash từng hình; cùng hash file hình/bảng/mô hình sinh ra), trừ cột
+  `fit_time_s` (thời gian huấn luyện) trong bảng so sánh của 07 và `reports/tables/07_model_comparison.csv`,
+  `08_ablation.csv`. Cột này đo thời gian thật nên thay đổi theo tải máy, không phải kết quả mô hình.
+- **Vì sao tái lập được:** chia dữ liệu theo thời gian (không xáo trộn), `random_state = 42` cho Random Forest, HGB, MLP
+  và permutation importance; EDA và mô hình tuyến tính không có bước ngẫu nhiên.
+- **Ghi chú về thời gian:** vòng 6 (notebook 07: 204 s so với ~120 s) và vòng 9 (notebook 05: 210 s so với ~23 s)
+  chạy chậm bất thường nhưng output giống hệt; nguyên nhân là máy bị chậm tạm thời, không phải lỗi notebook.
+  Khoảng nghỉ thực tế (từ lúc xong vòng trước đến lúc bắt đầu vòng sau) là 3,5–3,8 phút, riêng trước vòng 5 (~4,9 phút)
+  và vòng 8 (~6 phút) dài hơn dự kiến (script chỉ nghỉ 215 s và 232 s; nhiều khả năng máy tạm ngủ).
+- Nhật ký từng vòng: `test_runs/2026-11-22/logs/vong00.md` … `vong10.md`.
+  Bản chạy: `test_runs/2026-11-22/<notebook>_run01.ipynb` … `_run10.ipynb` (90 file).
+- `python -m pytest tests/ -v` với mô hình mới: **15/15 passed**.
+
+## So với bản đang có trên repo (trước khi chốt)
+
+| Notebook | Khác biệt | Lý do |
+|---|---|---|
+| 01, 02 | Không có | Output trùng từng byte |
+| 03, 04 | Chỉ dòng `Đã lưu hình: reports\figures\...` → `reports/figures/...` | Bản cũ chạy trên Windows |
+| 05, 06 | Chỉ số RF lệch ở chữ số thập phân thứ 2–3 (val_RMSE RF leaf=50: 84.675 → 84.680) | Bản cũ chạy trên máy khác (khác phiên bản thư viện/CPU). Số của 07, 08 trên repo vốn đã là 84.680 |
+| 07, 08, 09 | Chỉ số HGB lệch nhẹ (val_RMSE 84.379 → 84.391; test RMSE 58.878 → 58.888); bảng hiện đủ cột thay vì bị cắt `...` | HGB tính trên histogram bằng nhiều luồng, kết quả số thực khác nhau rất nhỏ giữa các máy |
+
+Mọi kết luận (RQ1–RQ4) **không đổi**. Riêng permutation importance của thiết lập A thay đổi thứ hạng ở nhóm đặc trưng
+có độ quan trọng ≈ 0 (chênh nhau vài phần nghìn Wh), nên số đặc trưng "không hơn `rv1`" đổi từ 13 thành 10.
+
+## Sửa phần nhận xét cho khớp output đã chốt
+
+| Notebook | Trước | Sau |
+|---|---|---|
+| 07 – mục 1 | CV RMSE 105,6 → 94,5 Wh; train–CV ~59 Wh | 106,5 → 94,4 Wh; ~60 Wh |
+| 08 – mục 1 | cảm biến tương quan cao nhất ≈ 0,2 | ≈ 0,26 (đúng số in ra) |
+| 08 – mục 2 | HGB hơn persistence 13,6% | 13,7% (57,36 so với 66,43 Wh) |
+| 08 – mục 3, bảng RQ4 | `lag_time`: 57,0 Wh | 56,9 Wh |
+| 09 – RQ3 (A) | `nsm` 7,4; `T3` 6,3; nhóm sau ~0,4–0,5 Wh | 7,3; 6,5; ~0,4–0,6 Wh (thứ tự theo bảng mới) |
+| 09 – RQ3 (A) | `rv1` 19/31; 13 đặc trưng không hơn `rv1` | 22/31; 10 đặc trưng (`RH_8`, `T7`, `RH_out` nay nhỉnh hơn `rv1` vài phần nghìn Wh) |
+| 09 – RQ3 (B) | `lag_10m` 44,4; `diff_10m` 3,1; `hour_sin`/`hour_cos` ~0,6 | 44,2; 3,2; 0,7 / 0,6 |
+| 09 – tổng kết, `README.md` | 13/30 đặc trưng không hơn `rv1` | 10/30 |
+
+Các số khác trong nhận xét (persistence 66,4 / 66,8 Wh; HGB test 58,9 Wh, R² 0,58; hơn persistence 11,9%; hơn baseline
+30,6%; Lasso 84,2 Wh; trôi dạt ~45 Wh; `T3` 21,7 → 25,5 °C; sai số theo mức tiêu thụ …) đã đối chiếu, **khớp**.
+
+**Chốt:** output của lần 10 được ghi vào 9 notebook gốc. Hình, bảng và `models/best_model.*` trong repo là kết quả của lần 10.
+
+## Việc còn tồn đọng
+
+- [ ] Permutation importance ở nhóm đặc trưng ≈ 0 không ổn định giữa các máy (13 ↔ 10 đặc trưng không hơn `rv1`).
+      Khi viết báo cáo nên nêu là "khoảng 10–13 đặc trưng" hoặc dùng ngưỡng (ví dụ tăng RMSE < 0,05 Wh) thay vì so sát với `rv1`.
