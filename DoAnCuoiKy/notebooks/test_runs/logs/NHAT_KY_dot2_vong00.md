@@ -1,4 +1,4 @@
-# Nhật ký vòng 00 (chạy thử, không lưu notebook)
+# Nhật ký kiểm thử đợt 2 – vòng 00 (chạy thử, không lưu notebook)
 
 **Ngày:** 22/11/2026 · **Bắt đầu:** 15:04:40 · **Môi trường:** Python 3.13.9, scikit-learn 1.9.1, pandas 2.3.3, nbclient (kernel mới cho mỗi notebook)
 

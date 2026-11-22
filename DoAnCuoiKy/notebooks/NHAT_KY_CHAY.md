@@ -663,8 +663,8 @@ Thời gian chạy từng notebook (giây):
   chạy chậm bất thường nhưng output giống hệt; nguyên nhân là máy bị chậm tạm thời, không phải lỗi notebook.
   Khoảng nghỉ thực tế (từ lúc xong vòng trước đến lúc bắt đầu vòng sau) là 3,5–3,8 phút, riêng trước vòng 5 (~4,9 phút)
   và vòng 8 (~6 phút) dài hơn dự kiến (script chỉ nghỉ 215 s và 232 s; nhiều khả năng máy tạm ngủ).
-- Nhật ký từng vòng: `test_runs/2026-11-22/logs/vong00.md` … `vong10.md`.
-  Bản chạy: `test_runs/2026-11-22/<notebook>_run01.ipynb` … `_run10.ipynb` (90 file).
+- Nhật ký từng vòng: `test_runs/logs/NHAT_KY_dot2_vong00.md` … `NHAT_KY_dot2_vong10.md`.
+  Bản chạy: `test_runs/<notebook>_dot2_run01.ipynb` … `_dot2_run10.ipynb` (90 file; "đợt 2" = lần chạy toàn bộ 01–09 ngày 22/11, phân biệt với các bản chạy cũ như `06_log_target_runXX`, `02_eda_vN_runXX`).
 - `python -m pytest tests/ -v` với mô hình mới: **15/15 passed**.
 
 ## So với bản đang có trên repo (trước khi chốt)
