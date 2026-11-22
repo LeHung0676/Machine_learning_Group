@@ -1,0 +1,9 @@
+thiết lập,mô hình,MAE,RMSE,R2,MAPE_%
+A – không lịch sử điện,Baseline theo giờ,46.49,84.88,0.128,46.347
+A – không lịch sử điện,Lasso,48.985,84.169,0.142,53.162
+A – không lịch sử điện,Random Forest,72.112,98.252,-0.169,93.583
+A – không lịch sử điện,HGB,73.608,99.932,-0.209,95.755
+B – có lịch sử điện,Persistence,26.738,66.837,0.459,21.513
+B – có lịch sử điện,Lasso,26.795,60.576,0.556,24.373
+B – có lịch sử điện,Random Forest,25.589,58.907,0.58,22.521
+B – có lịch sử điện,HGB,25.244,58.878,0.58,22.034

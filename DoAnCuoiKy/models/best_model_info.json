@@ -1,0 +1,36 @@
+{
+  "model": "HistGradientBoostingRegressor",
+  "params": {
+    "learning_rate": 0.02,
+    "max_leaf_nodes": 7,
+    "min_samples_leaf": 100,
+    "max_iter": 300,
+    "l2_regularization": 1.0
+  },
+  "feature_set": "lag_time",
+  "features": [
+    "nsm",
+    "hour_sin",
+    "hour_cos",
+    "day_of_week",
+    "is_weekend",
+    "lag_10m",
+    "lag_20m",
+    "lag_30m",
+    "lag_60m",
+    "roll_mean_30m",
+    "roll_mean_60m",
+    "diff_10m"
+  ],
+  "target": "Appliances",
+  "trained_on": "2016-01-11 17:00:00 → 2016-05-07 04:30:00 (train + validation)",
+  "test_period": "2016-05-07 04:40:00 → 2016-05-27 18:00:00",
+  "test_metrics": {
+    "MAE": 25.244,
+    "RMSE": 58.878,
+    "R2": 0.58,
+    "MAPE_%": 22.034
+  },
+  "sklearn_version": "1.9.1",
+  "notebook": "notebooks/09_final_evaluation.ipynb"
+}
