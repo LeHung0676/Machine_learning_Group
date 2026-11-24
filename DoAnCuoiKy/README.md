@@ -113,7 +113,7 @@ Notebook (mở bằng Jupyter, chạy *Run All*):
   persistence 11.9%.
 - **RQ2:** mô hình phi tuyến không vượt trội; với thiết lập A, chúng còn sụp đổ trên test do quan hệ cảm biến – điện năng
   thay đổi theo mùa (notebook 09, mục 2.1).
-- **RQ3:** giờ trong ngày và nhiệt độ phòng giặt `T3` quan trọng nhất; 13/30 đặc trưng không hơn biến ngẫu nhiên `rv1`.
+- **RQ3:** giờ trong ngày và nhiệt độ phòng giặt `T3` quan trọng nhất; `rv1` xếp giữa bảng (hạng 24/31 ở thiết lập A, 22/38 ở B): 8 đặc trưng (A) và 16 (B) không hơn `rv1`; các đặc trưng này có độ quan trọng gần 0 nên thứ hạng quanh `rv1` dao động giữa các lần chạy.
 - **RQ4:** thêm tiêu thụ quá khứ gần giảm RMSE ~30%; khi đó cảm biến môi trường không còn đóng góp.
 
 Bảng đầy đủ: `reports/tables/`. Hình cho báo cáo/slide/poster: `reports/figures/`.

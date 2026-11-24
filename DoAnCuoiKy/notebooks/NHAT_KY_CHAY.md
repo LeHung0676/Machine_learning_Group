@@ -600,3 +600,13 @@ cần đặc trưng lag trong `src/features.py` (lượt 2); demo cần mô hìn
 - [ ] Chạy `streamlit run app/app.py`, chụp màn hình cho slide/poster.
 - [ ] Đối chiếu cách bài báo gốc chọn tập test (ngẫu nhiên hay theo thời gian) trước khi so sánh R² trong báo cáo
       (notebook 07, mục 3).
+
+
+---
+
+## Chạy lại notebook 07 → 08 → 09 (24/11/2026, Windows, scikit-learn 1.7.2)
+
+- Bổ sung notebook 09, `models/best_model.*`, hình/bảng 09 từ gói lượt 3 (Lê Đức Anh) vào repo; `pytest`: 15 passed.
+- Mô hình đã lưu được tạo bằng scikit-learn 1.9.1 nên chạy lại 07, 08, 09 trên máy này để mô hình khớp phiên bản.
+- Sửa 2 lỗi môi trường: notebook 08 (`.max().round(3)` lỗi vì pandas trả về `float`), notebook 09 (`permutation_importance(n_jobs=-1)` lỗi dọn thư mục tạm joblib trên Windows → `n_jobs=1`).
+- Kết quả test gần như không đổi (HGB B: RMSE 58.914, MAE 25.257, R² 0.58). Số đặc trưng không hơn `rv1` đổi từ 13 → 8 (A) / 16 (B) do nhiễu của permutation importance.
